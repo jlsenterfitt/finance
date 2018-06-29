@@ -1,3 +1,10 @@
+# Personal
+*.csv
+*.bz2
+*_ignore_*
+*.gdoc
+.vscode/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
