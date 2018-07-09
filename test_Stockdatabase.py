@@ -49,6 +49,19 @@ class Test_StockDatabase(unittest.TestCase):
         self.assertListEqual(list(stock_db.price_array[3]), [208, 309])
         self.assertEqual(len(stock_db.price_array), 4)
 
+    def test_getPriceChangeArray(self):
+        stock_db = StockDatabase(self.test_stock_dict)
+        # Stock 1 is filtered out, so rows should have stock2 + 3 data.
+        self.assertListEqual(
+            list(stock_db.price_change_array[0]), [1.01, 1.01])
+        self.assertListEqual(
+            list(stock_db.price_change_array[1]),
+            [1.0198019801980198, 1.00990099009901])
+        self.assertListEqual(
+            list(stock_db.price_change_array[2]),
+            [1.0097087378640777, 1.0098039215686274])
+        self.assertEqual(len(stock_db.price_change_array), 3)
+
     def test_getCovarianceArray(self):
         stock_db = StockDatabase(self.test_stock_dict)
         expected = np.array([[2.20041322e-05, 7.37259266e-09],
