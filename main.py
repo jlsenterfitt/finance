@@ -1,4 +1,5 @@
 import DataIO
+from Portfolio import Portfolio
 from Stock import Stock
 from StockDatabase import StockDatabase
 import utils
@@ -43,9 +44,9 @@ def getInputData():
     DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
 
     # Create current portfolio.
-    # current_portfolio = Portfolio.Portfolio(curr_alloc_dict, stock_db)
+    current_portfolio = Portfolio(current_alloc_dict, stock_db)
 
-    return None, None, None
+    return required_return_list, current_portfolio, stock_db
 
 
 def getDesiredPortfolio(required_return, stock_db):
