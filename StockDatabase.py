@@ -18,7 +18,8 @@ class StockDatabase(object):
         # Create a "standard" order of tickers.
         self.tickers = sorted(self.stock_dict.keys())
         self.price_array = self._getFilteredPrices()
-        self.covar_array = self._getCovarianceArray
+        self.covar_array = self._getCovarianceArray()
+        self.correl_array = self._getCorrelationArray()
 
     def _filterStocks(self):
         """Remove stocks with too little data.
@@ -71,13 +72,22 @@ class StockDatabase(object):
 
     def _getCovarianceArray(self):
         """Generate a variance-covariance array between stocks.
+
         Returns:
             covar_array {array}: Variance-Covariance array of self.stocks.
         """
-        # Calculate price changes with removed dates.
         prices = self.price_array[1:]
         prev_prices = self.price_array[:-1]
         price_change_array = prices / prev_prices
-
-        # Calculate correlations.
         return np.cov(price_change_array, rowvar=False, ddof=0)
+
+    def _getCorrelationArray(self):
+        """Generate a correlation array between stocks.
+
+        Returns:
+            correl_array {array}: Correlation array of self.stocks.
+        """
+        prices = self.price_array[1:]
+        prev_prices = self.price_array[:-1]
+        price_change_array = prices / prev_prices
+        return np.corrcoef(price_change_array, rowvar=False, ddof=0)

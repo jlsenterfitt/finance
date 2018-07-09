@@ -53,13 +53,26 @@ class Test_StockDatabase(unittest.TestCase):
         stock_db = StockDatabase(self.test_stock_dict)
         expected = np.array([[2.20041322e-05, 7.37259266e-09],
                              [7.37259266e-09, 6.40800126e-09]])
-        self.assertAlmostEqual(stock_db.covar_array()[0][0],
+        self.assertAlmostEqual(stock_db.covar_array[0][0],
                                expected[0][0])
-        self.assertAlmostEqual(stock_db.covar_array()[0][1],
+        self.assertAlmostEqual(stock_db.covar_array[0][1],
                                expected[0][1])
-        self.assertAlmostEqual(stock_db.covar_array()[1][0],
+        self.assertAlmostEqual(stock_db.covar_array[1][0],
                                expected[1][0])
-        self.assertAlmostEqual(stock_db.covar_array()[1][1],
+        self.assertAlmostEqual(stock_db.covar_array[1][1],
+                               expected[1][1])
+
+    def test_getCorrelationArray(self):
+        stock_db = StockDatabase(self.test_stock_dict)
+        expected = np.array([[1.0, 0.019633911192017413],
+                             [0.019633911192017413, 1.0]])
+        self.assertAlmostEqual(stock_db.correl_array[0][0],
+                               expected[0][0])
+        self.assertAlmostEqual(stock_db.correl_array[0][1],
+                               expected[0][1])
+        self.assertAlmostEqual(stock_db.correl_array[1][0],
+                               expected[1][0])
+        self.assertAlmostEqual(stock_db.correl_array[1][1],
                                expected[1][1])
 
 
