@@ -49,17 +49,17 @@ def getInputData():
     return required_return_list, current_portfolio, stock_db
 
 
-def getDesiredPortfolio(required_return, stock_db):
+def getDesiredPortfolio(required_return_list, stock_db):
     """Get the desired portfolio.
 
     Args:
-        required_return {float}: Return required to pay bills.
+        required_return_list {float}: Return required to pay bills.
         stock_db {StockDatabase}: A database of all necessary stock info.
     Returns:
         desired_portfolio {Portfolio}: A Portfolio with chosen weights.
     """
     # Iteratively create desired weights.
-    # wf = WeightFactory.WeightFactory(ticker_list, stock_db, required_return)
+    # wf = WeightFactory.WeightFactory(stock_db, required_return_list)
 
     # Create desired portfolio.
     # desired_portfolio = Portfolio.Portfolio(wf.desired_allocations, stock_db)
