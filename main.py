@@ -62,7 +62,7 @@ def getDesiredPortfolio(required_return_list, stock_db):
     # wf = WeightFactory.WeightFactory(stock_db, required_return_list)
 
     # Create desired portfolio.
-    # desired_portfolio = Portfolio.Portfolio(wf.desired_allocations, stock_db)
+    # desired_portfolio = Portfolio.Portfolio(wf.desired_alloc_dict, stock_db)
 
     return {}
 
