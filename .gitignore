@@ -3,6 +3,7 @@
 *.bz2
 *_ignore_*
 *.gdoc
+*.gsheet
 .vscode/*
 
 # Byte-compiled / optimized / DLL files

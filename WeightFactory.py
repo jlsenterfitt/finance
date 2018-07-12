@@ -1,3 +1,36 @@
+
+def CalcScore(weights, *args):
+    """Generate the score of a given set of weights.
+
+    Goal is to minimize a modified Sortino Ratio (below), defined as the
+        portfolio's return divided by it's cumulative downside risk. This
+        differs in that no single required return is defined (since each
+        year has its own), and the downside risk is the sum of all downside
+        risks for the future.
+    https://en.wikipedia.org/wiki/Sortino_ratio
+
+    Args:
+        weights {list}: A list of weights.
+        *args {tuple}: A set of constants for calculating the score.
+            arg0 {list}: A list of required IRRs.
+            arg1 {matrix}: Matrix of price changes over time.
+    Returns:
+        score {float}: The modified Sortino Ratio of this set of weights.
+    """
+    # First, create an array of backdated prices for the given weights.
+
+    # Second, estimate the parameters for the lognormal distribution of price
+    # changes for this portfolio.
+
+    # Third, loop over required IRRs and determine downside risk for each.
+    # https://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html
+
+    # Fourth, calculate the modified Sortino Ratio.
+
+    # TODO-implement
+    pass
+
+
 class WeightFactory(object):
     """Generates desired weights."""
 
@@ -25,24 +58,6 @@ class WeightFactory(object):
         Returns:
             desired_allocations {dict}: Dictionary of tickers to percent
                 allocations.
-        """
-        # TODO-implement
-        pass
-
-    def _calcScore(self):
-        """Generate the score of a given set of weights.
-
-        Goal is to minimize a modified Sortino Ratio (below), defined as the
-            portfolio's return divided by it's cumulative downside risk. This
-            differs in that no single required return is defined (since each
-            year has its own), and the downside risk is the sum of all downside
-            risks for the future.
-        https://en.wikipedia.org/wiki/Sortino_ratio
-
-        Args:
-            weights {list}: A list of weights.
-        Returns:
-            score {number}: The modified Sortino Ratio of this set of weights.
         """
         # TODO-implement
         pass
