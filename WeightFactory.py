@@ -1,3 +1,29 @@
+import numpy as np
+
+
+def GetBackdatedReturns(weights, return_matrix):
+    """Get an array of backdated returns based on input weights.
+
+    Args:
+        weights {array}: A list of weights.
+        return_matrix {matrix}: The matrix of all historical returns.
+    Returns:
+        backdated_returns {array}: An array of backdated portfolio returns.
+    """
+    return np.matmul(weights, return_matrix)
+
+
+def EstimateDistributionParameters():
+    pass
+
+
+def CalcDownsideRisk():
+    pass
+
+
+def CalcModifiedSortinoRatio():
+    pass
+
 
 def CalcScore(weights, *args):
     """Generate the score of a given set of weights.
@@ -10,7 +36,7 @@ def CalcScore(weights, *args):
     https://en.wikipedia.org/wiki/Sortino_ratio
 
     Args:
-        weights {list}: A list of weights.
+        weights {array}: An array of weights.
         *args {tuple}: A set of constants for calculating the score.
             arg0 {list}: A list of required IRRs.
             arg1 {matrix}: Matrix of price changes over time.
