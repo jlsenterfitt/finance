@@ -1,57 +1,37 @@
 import numpy as np
 
 
-def GetBackdatedReturns(weights, return_matrix):
-    """Get an array of backdated returns based on input weights.
-
-    Args:
-        weights {array}: A list of weights.
-        return_matrix {matrix}: The matrix of all historical returns.
-    Returns:
-        backdated_returns {array}: An array of backdated portfolio returns.
-    """
-    return np.matmul(weights, return_matrix)
-
-
-def EstimateDistributionParameters():
-    pass
-
-
-def CalcDownsideRisk():
-    pass
-
-
-def CalcModifiedSortinoRatio():
-    pass
-
-
 def CalcScore(weights, *args):
     """Generate the score of a given set of weights.
 
     Goal is to minimize a modified Sortino Ratio (below), defined as the
-        portfolio's return divided by it's cumulative downside risk. This
-        differs in that no single required return is defined (since each
-        year has its own), and the downside risk is the sum of all downside
-        risks for the future.
+        portfolio's excess return divided by it's cumulative downside risk and
+        its internal downside correlation. The internal downside correlation
+        is the correlation of the portfolio in each underperforming period.
     https://en.wikipedia.org/wiki/Sortino_ratio
 
     Args:
         weights {array}: An array of weights.
         *args {tuple}: A set of constants for calculating the score.
-            arg0 {list}: A list of required IRRs.
+            arg0 {float}: The required IRR.
             arg1 {matrix}: Matrix of price changes over time.
     Returns:
         score {float}: The modified Sortino Ratio of this set of weights.
     """
     # First, create an array of backdated prices for the given weights.
+    # (r_id)
 
-    # Second, estimate the parameters for the lognormal distribution of price
-    # changes for this portfolio.
+    # Second, get the backdated return of the portfolio.
+    # (R-bar)
 
-    # Third, loop over required IRRs and determine downside risk for each.
-    # https://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html
+    # Third, calculate the downside risk for the portolio.
+    # (s)
 
-    # Fourth, calculate the modified Sortino Ratio.
+    # Fourth, calculate the downside correlation for the portfolio.
+    # (c)
+
+    # Finally, calculate the modified Sortino Ratio.
+    # (m)
 
     # TODO-implement
     pass
