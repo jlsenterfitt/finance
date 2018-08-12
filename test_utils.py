@@ -5,14 +5,14 @@ import utils
 
 class Test_getRequiredReturn(unittest.TestCase):
     def test_normal(self):
-        expected = [1.1]
-        actual = utils.getRequiredReturn([-110000], 100000)
-        self.assertListEqual(actual, expected)
+        expected = 1.1
+        actual = utils.getRequiredReturn([-12, -11], 20)
+        self.assertAlmostEqual(actual, expected)
 
     def test_nan(self):
-        expected = [0]
+        expected = 0
         actual = utils.getRequiredReturn([100000], 100000)
-        self.assertListEqual(actual, expected)
+        self.assertEqual(actual, expected)
 
 
 if __name__ == '__main__':

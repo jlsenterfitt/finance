@@ -22,16 +22,11 @@ def getRequiredReturn(cash_flow_list, funds_available):
         cash_flow_list {list}: List of expected expenditures and incomes.
         funds_available {Decimal}: Sum of currently invested funds.
     Returns:
-        required_return_list {list}: Rate required to break even for each year.
+        required_return {float}: Rate required to break even for all years.
     """
-    required_return_list = []
-    iterative_cash_flows = [-funds_available]
-    for flow in cash_flow_list:
-        iterative_cash_flows.append(-flow)
-        irr = np.irr(iterative_cash_flows)
-        # Large deposits may have an irr of NaN, which we ceil to 0.
-        if np.isnan(irr):
-            required_return_list.append(0)
-        else:
-            required_return_list.append(1 + irr)
-    return required_return_list
+    cash_flows = [funds_available]
+    cash_flows.extend(cash_flow_list)
+    irr = np.irr(cash_flows)
+    if np.isnan(irr):
+        return 0
+    return 1 + irr

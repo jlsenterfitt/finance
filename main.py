@@ -9,7 +9,7 @@ def getInputData():
     """Get all necessary input data for running a model.
 
     Returns:
-        required_return_list {list}: Rate required to break even for each year.
+        required_return {float}: Rate required to break even for all years.
         current_portfolio {Portfolio}: A Portfolio of current investments.
         stock_db {StockDatabase}: A database of all necessary stock info.
     """
@@ -21,8 +21,7 @@ def getInputData():
         'data/current_allocations.csv')
 
     # Calculate IRR
-    required_return_list = utils.getRequiredReturn(
-        cash_flow_list, funds_available)
+    required_return = utils.getRequiredReturn(cash_flow_list, funds_available)
 
     # Get tickers and expense ratios.
     ticker_list, expense_ratio_dict = DataIO.getTickerList(
@@ -46,20 +45,20 @@ def getInputData():
     # Create current portfolio.
     current_portfolio = Portfolio(current_alloc_dict, stock_db)
 
-    return required_return_list, current_portfolio, stock_db
+    return required_return, current_portfolio, stock_db
 
 
-def getDesiredPortfolio(required_return_list, stock_db):
+def getDesiredPortfolio(required_return, stock_db):
     """Get the desired portfolio.
 
     Args:
-        required_return_list {float}: Return required to pay bills.
+        required_return {float}: Return required to pay bills.
         stock_db {StockDatabase}: A database of all necessary stock info.
     Returns:
         desired_portfolio {Portfolio}: A Portfolio with chosen weights.
     """
     # Iteratively create desired weights.
-    # wf = WeightFactory.WeightFactory(stock_db, required_return_list)
+    # wf = WeightFactory.WeightFactory(stock_db, required_return)
 
     # Create desired portfolio.
     # desired_portfolio = Portfolio.Portfolio(wf.desired_alloc_dict, stock_db)
@@ -83,9 +82,9 @@ def getTrades(current_portfolio, desired_portfolio):
 
 
 def main():
-    (required_return_list, current_portfolio, stock_db) = getInputData()
+    (required_return, current_portfolio, stock_db) = getInputData()
 
-    desired_portfolio = getDesiredPortfolio(required_return_list, stock_db)
+    desired_portfolio = getDesiredPortfolio(required_return, stock_db)
 
     getTrades(current_portfolio, desired_portfolio)
 
