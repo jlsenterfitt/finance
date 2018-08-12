@@ -49,6 +49,12 @@ class Test_Portfolio(unittest.TestCase):
         self.assertAlmostEqual(list(portfolio.backtested_returns)[0], 1.017)
         self.assertEqual(len(portfolio.backtested_returns), 4)
 
+    def test_averageReturn(self):
+        percent_allocations = {'1': 0.5, '2': 0.4, '3': 0.1}
+        portfolio = Portfolio(
+            self.stock_db, percent_allocations_dict=percent_allocations)
+        self.assertAlmostEqual(portfolio.average_return, 1.0198523)
+
 
 if __name__ == '__main__':
     unittest.main()

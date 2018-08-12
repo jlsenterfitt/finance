@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats.mstats import gmean
 
 
 class Portfolio(object):
@@ -21,8 +22,7 @@ class Portfolio(object):
         self.allocation_array = self._getPercentAllocations(
             percent_allocations, percent_allocations_dict)
         self.backtested_returns = self._getBacktestedReturns()
-        # TODO: Change this to only take a list of percent allocations in order of the stock database.
-        # TODO: Add r-bar.
+        self.average_return = gmean(self.backtested_returns)
         # TODO: Add portfolio stdev (testing only).
         # TODO: Add downside risk (s).
         # TODO: Add downside correlation.
