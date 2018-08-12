@@ -15,6 +15,12 @@ class Portfolio(object):
         self._stock_db = stock_db
         self.percent_allocations = percent_allocations
         self.backtested_returns = self._getBacktestedReturns()
+        # TODO: Change this to only take a list of percent allocations in order of the stock database.
+        # TODO: Add r-bar.
+        # TODO: Add portfolio stdev (testing only).
+        # TODO: Add downside risk (s).
+        # TODO: Add downside correlation.
+        # TODO: Add score.
 
     def _getBacktestedReturns(self):
         """Calculate backtested returns for the portfolio.

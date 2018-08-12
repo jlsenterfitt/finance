@@ -19,8 +19,6 @@ class StockDatabase(object):
         self.tickers = sorted(self.stock_dict.keys())
         self.price_array = self._getFilteredPrices()
         self.price_change_array = self._getPriceChangeArray()
-        self.covar_array = self._getCovarianceArray()
-        self.correl_array = self._getCorrelationArray()
 
     def _filterStocks(self):
         """Remove stocks with too little data.
@@ -80,19 +78,3 @@ class StockDatabase(object):
         prices = self.price_array[1:]
         prev_prices = self.price_array[:-1]
         return prices / prev_prices
-
-    def _getCovarianceArray(self):
-        """Generate a variance-covariance array between stocks.
-
-        Returns:
-            covar_array {array}: Variance-Covariance array of self.stocks.
-        """
-        return np.cov(self.price_change_array, rowvar=False, ddof=0)
-
-    def _getCorrelationArray(self):
-        """Generate a correlation array between stocks.
-
-        Returns:
-            correl_array {array}: Correlation array of self.stocks.
-        """
-        return np.corrcoef(self.price_change_array, rowvar=False, ddof=0)
