@@ -43,7 +43,8 @@ def getInputData():
     DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
 
     # Create current portfolio.
-    current_portfolio = Portfolio(current_alloc_dict, stock_db)
+    current_portfolio = Portfolio(
+        stock_db, percent_allocations_dict=current_alloc_dict)
 
     return required_return, current_portfolio, stock_db
 

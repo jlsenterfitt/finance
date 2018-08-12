@@ -44,7 +44,8 @@ class Test_Portfolio(unittest.TestCase):
 
     def test_getBacktestedReturns(self):
         percent_allocations = {'1': 0.5, '2': 0.4, '3': 0.1}
-        portfolio = Portfolio(percent_allocations, self.stock_db)
+        portfolio = Portfolio(
+            self.stock_db, percent_allocations_dict=percent_allocations)
         self.assertAlmostEqual(list(portfolio.backtested_returns)[0], 1.017)
         self.assertEqual(len(portfolio.backtested_returns), 4)
 
