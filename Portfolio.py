@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.stats.mstats import gmean
 
+import Config
+
 
 class Portfolio(object):
     """Stores information about a current, desired, or potential portfolio."""
@@ -24,6 +26,10 @@ class Portfolio(object):
         # TODO: These returns should build in expense ratios.
         self.backtested_returns = self._getBacktestedReturns()
         self.average_return = gmean(self.backtested_returns)
+
+        self.downside_risk = None
+        self.downside_correl = None
+        self.score = None
 
     def _getPercentAllocations(
             self, percent_allocations, percent_allocations_dict):
@@ -60,7 +66,7 @@ class Portfolio(object):
         return np.matmul(
             self._stock_db.price_change_array, self.allocation_array)
 
-    def _getScore(self, required_return):
+    def getScore(self, required_return):
         """Calculate the score of this portfolio using a modifed Sortino Ratio.
 
         Score = (avg_return - wanted_return) / \
@@ -71,10 +77,13 @@ class Portfolio(object):
         downside_correl = correl of portfolio in periods below wanted return.
 
         Args:
-            required_return {float}: The required level of return.
+            required_return {float}: The required level of return per year.
         Returns:
             score {float}: The modified Sortino Ratio of this portfolio.
         """
+        # De-annualize the required return.
+        required_return = np.power(required_return, 1.0 / Config.DAYS_IN_YEAR)
+
         # Determine downside_risk.
         returns = np.copy(self.backtested_returns)
         returns -= required_return
@@ -85,6 +94,7 @@ class Portfolio(object):
 
         # Determine downside_correl.
         returns = np.copy(self.backtested_returns)
+        print(returns)
         below_desired = returns < required_return
         filtered_returns = [
             self._stock_db.price_change_array[x]
