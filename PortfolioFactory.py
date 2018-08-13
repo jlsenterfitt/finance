@@ -13,8 +13,10 @@ class PortfolioFactory(object):
         """
         self._stock_db = stock_db
         self._required_return = required_return
+        self.desired_portfolio = None
+        # self.desired_portfolio = self._Solve()
 
-    def Solve(self):
+    def _Solve(self):
         """Actually run the solver.
 
         Several optimization methods are given vai SciPy (below). Will need to

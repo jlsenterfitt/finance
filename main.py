@@ -1,5 +1,6 @@
 import DataIO
 from Portfolio import Portfolio
+from PortfolioFactory import PortfolioFactory
 from Stock import Stock
 from StockDatabase import StockDatabase
 import utils
@@ -46,24 +47,6 @@ def getInputData():
     return required_return, current_portfolio, stock_db
 
 
-def getDesiredPortfolio(required_return, stock_db):
-    """Get the desired portfolio.
-
-    Args:
-        required_return {float}: Return required to pay bills.
-        stock_db {StockDatabase}: A database of all necessary stock info.
-    Returns:
-        desired_portfolio {Portfolio}: A Portfolio with chosen weights.
-    """
-    # Iteratively create desired weights.
-    # wf = WeightFactory.WeightFactory(stock_db, required_return)
-
-    # Create desired portfolio.
-    # desired_portfolio = Portfolio.Portfolio(wf.desired_alloc_dict, stock_db)
-
-    return {}
-
-
 def getTrades(current_portfolio, desired_portfolio):
     """Get a list of potential trades to get to a desired correlation.
 
@@ -83,7 +66,8 @@ def main():
     # Write stock database.
     DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
 
-    desired_portfolio = getDesiredPortfolio(required_return, stock_db)
+    pf = PortfolioFactory(stock_db, required_return)
+    desired_portfolio = pf.desired_portfolio
 
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(
