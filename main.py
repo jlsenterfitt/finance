@@ -92,7 +92,7 @@ def main():
     tf = getTrades(current_portfolio, desired_portfolio)
 
     # Print trade factory.
-    # DataIO.writeTrades(tf, filename)
+    DataIO.writeTrades(tf, 'data/Trades.csv')
 
 
 if __name__ == '__main__':
