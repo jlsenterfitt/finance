@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from decimal import Decimal
+import numpy as np
 import unittest
 
 import Config
@@ -42,6 +43,18 @@ class Test_Portfolio(unittest.TestCase):
 
         self.stock_db = StockDatabase(test_stock_dict)
 
+    def test_getPercentAllocationsDict(self):
+        percent_allocations = {'1': 0.5, '2': 0.4, '3': 0.1}
+        portfolio = Portfolio(
+            self.stock_db, percent_allocations_dict=percent_allocations)
+        self.assertListEqual(list(portfolio.allocation_array), [0.5, 0.4, 0.1])
+
+    def test_getPercentAllocationsArray(self):
+        percent_allocations = [0.5, 0.4, 0.1]
+        portfolio = Portfolio(
+            self.stock_db, percent_allocations=percent_allocations)
+        self.assertListEqual(list(portfolio.allocation_array), [0.5, 0.4, 0.1])
+
     def test_getBacktestedReturns(self):
         percent_allocations = {'1': 0.5, '2': 0.4, '3': 0.1}
         portfolio = Portfolio(
@@ -54,6 +67,52 @@ class Test_Portfolio(unittest.TestCase):
         portfolio = Portfolio(
             self.stock_db, percent_allocations_dict=percent_allocations)
         self.assertAlmostEqual(portfolio.average_return, 1.0198523)
+
+    def test_downsideRisk(self):
+        portfolio = Portfolio(
+            self.stock_db, percent_allocations=[0.5, 0.4, 0.1])
+        returns = np.array([1.01, 1.02, 1.03, 1.04, 1.05], dtype=np.float64)
+        portfolio.backtested_returns = returns
+        portfolio._stock_db.price_change_array = [
+            [1.00, 1.01, 1.02],
+            [1.01, 1.02, 1.03],
+            [1.02, 1.03, 1.04],
+            [1.03, 1.04, 1.05],
+            [1.04, 1.05, 1.06]
+        ]
+        portfolio._getScore(1.03)
+        self.assertAlmostEqual(portfolio.downside_risk, 0.01)
+
+    def test_downsideCorrel(self):
+        portfolio = Portfolio(
+            self.stock_db, percent_allocations=[0.5, 0.4, 0.1])
+        returns = np.array([1.01, 1.02, 1.03, 1.04, 1.05], dtype=np.float64)
+        portfolio.backtested_returns = returns
+        portfolio._stock_db.price_change_array = [
+            [1.00, 1.01, 1.02],
+            [1.01, 1.00, 1.03],
+            [1.02, 0.99, 1.04],
+            [1.03, 0.98, 1.05],
+            [1.04, 0.97, 1.06]
+        ]
+        portfolio._getScore(1.05)
+        self.assertAlmostEqual(portfolio.downside_correl, 0.04)
+
+    def test_score(self):
+        portfolio = Portfolio(
+            self.stock_db, percent_allocations=[0.5, 0.4, 0.1])
+        returns = np.array([1.01, 1.02, 1.03, 1.04, 1.05], dtype=np.float64)
+        portfolio.backtested_returns = returns
+        portfolio._stock_db.price_change_array = [
+            [1.00, 1.01, 1.02],
+            [1.01, 1.00, 1.03],
+            [1.02, 0.99, 1.04],
+            [1.03, 0.98, 1.05],
+            [1.04, 0.97, 1.06]
+        ]
+        score = portfolio._getScore(1.021)
+        self.assertAlmostEqual(portfolio.score, -5.80858974126046)
+        self.assertAlmostEqual(score, -5.80858974126046)
 
 
 if __name__ == '__main__':
