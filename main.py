@@ -39,9 +39,6 @@ def getInputData():
     # Create stock database.
     stock_db = StockDatabase(stock_dict)
 
-    # Write stock database.
-    DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
-
     # Create current portfolio.
     current_portfolio = Portfolio(
         stock_db, percent_allocations_dict=current_alloc_dict)
@@ -77,17 +74,25 @@ def getTrades(current_portfolio, desired_portfolio):
     # Create trade factory between current and desired portfolio.
     # tf = TradeFactory.TradeFactory(current_portfolio, desired_portfolio)
 
-    # Print trade factory.
-    # DataIO.writeTrades(trade_factory, filename)
-    pass
+    return {}
 
 
 def main():
     (required_return, current_portfolio, stock_db) = getInputData()
 
+    # Write stock database.
+    DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
+
     desired_portfolio = getDesiredPortfolio(required_return, stock_db)
 
-    getTrades(current_portfolio, desired_portfolio)
+    # Write desired portfolio.
+    DataIO.writeDesiredPortfolio(
+        desired_portfolio, 'data/DesiredPortfolio.csv')
+
+    tf = getTrades(current_portfolio, desired_portfolio)
+
+    # Print trade factory.
+    # DataIO.writeTrades(tf, filename)
 
 
 if __name__ == '__main__':

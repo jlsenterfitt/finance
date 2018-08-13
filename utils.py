@@ -1,18 +1,6 @@
 import numpy as np
 
 
-def getCorrelation(ordered_dict_1, ordered_dict_2):
-    """Get correlation of two dictionaries.
-
-    Filters the dictionaries to have the same dates, then checks the correlation
-        of their values.
-    Returns:
-        correl {float}: The filtered correlation of the two dicts.
-    """
-    # TODO-implement
-    pass
-
-
 def getRequiredReturn(cash_flow_list, funds_available):
     """Calculate a required rate of return.
 

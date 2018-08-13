@@ -123,6 +123,17 @@ def writeTrades(trade_factory, filename):
     pass
 
 
+def writeDesiredPortfolio(portfolio, filename):
+    """Write the desired portfolio to disk.
+
+    Args:
+        portfolio {Portfolio}: The portfolio to write.
+        filename {string}: Where to write the data.
+    """
+    # TODO-implement
+    pass
+
+
 def writeStockDatabase(stock_db, filename):
     """Write the database to disk.
 

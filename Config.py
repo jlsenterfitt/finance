@@ -3,7 +3,6 @@
 DAYS_IN_YEAR = 261
 INITIAL_PERCENTILE = 0.5
 
-# TODO: This should shift higher over time.
 MINIMUM_AMOUNT_DATA = DAYS_IN_YEAR * 14
 
 with open('api_key_ignore_.txt', 'r') as f:
