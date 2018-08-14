@@ -61,13 +61,18 @@ def getTrades(current_portfolio, desired_portfolio):
 
 
 def main():
+    print('Reading data...')
     (required_return, current_portfolio, stock_db) = getInputData()
 
     # Write stock database.
     DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
 
+    print('Optimizing portfolio...')
     pf = PortfolioFactory(stock_db, required_return)
     desired_portfolio = pf.desired_portfolio
+    print(stock_db.tickers)
+    print(desired_portfolio.allocation_array)
+    print(desired_portfolio.score)
 
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(

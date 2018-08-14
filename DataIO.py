@@ -212,6 +212,7 @@ def _getAPIData(ticker_list):
     """
     cache_data = {}
     for ticker in ticker_list:
+        print('Retrieving ticker %s' % ticker)
         cache_data.update(_callApi(ticker))
     return cache_data
 

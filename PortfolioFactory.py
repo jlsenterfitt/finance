@@ -34,6 +34,8 @@ class PortfolioFactory(object):
             desired_allocations {dict}: Dictionary of tickers to percent
                 allocations.
         """
+        minorSteps = 0
+        majorSteps = 0
         best = np.zeros(len(self._stock_db.tickers))
         best[0] = 1
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
@@ -59,14 +61,19 @@ class PortfolioFactory(object):
                         self._stock_db, percent_allocations=curr)
                     currScore = portfolio.getScore(self._required_return)
 
+                    minorSteps += 1
                     if currScore > bestScore:
                         bestScore = currScore
                         best = np.copy(curr)
                         improved = True
+                        majorSteps += 1
 
             if not improved:
                 tradeAmount /= 2.0
 
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
         portfolio.getScore(self._required_return)
+
+        print ('Major steps %d' % majorSteps)
+        print ('Minor steps %d' % minorSteps)
         return portfolio
