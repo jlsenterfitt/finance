@@ -94,7 +94,6 @@ class Portfolio(object):
 
         # Determine downside_correl.
         returns = np.copy(self.backtested_returns)
-        print(returns)
         below_desired = returns < required_return
         filtered_returns = [
             self._stock_db.price_change_array[x]

@@ -44,12 +44,22 @@ class Test_Portfolio(unittest.TestCase):
         self.stock_db = StockDatabase(test_stock_dict)
 
     def test_default(self):
+        # Here be dragons: This serves as a pseudo integration test for
+        # StockDB, Portfolio, and PortfolioFactory.
         pf = PortfolioFactory(self.stock_db, 1.0)
-        print(pf.desired_portfolio.allocation_array)
-        print(pf.desired_portfolio.average_return)
-        print(pf.desired_portfolio.downside_risk)
-        print(pf.desired_portfolio.downside_correl)
-        print(pf.desired_portfolio.score)
+        # Only run to 3 digits, optimizer runs to 5.
+        self.assertAlmostEqual(
+            pf.desired_portfolio.allocation_array[0], 0.481, 3)
+        self.assertAlmostEqual(
+            pf.desired_portfolio.allocation_array[1], 0.519, 3)
+        self.assertAlmostEqual(
+            pf.desired_portfolio.average_return, 1.001, 3)
+        self.assertAlmostEqual(
+            pf.desired_portfolio.downside_risk, 0.001, 3)
+        self.assertAlmostEqual(
+            pf.desired_portfolio.downside_correl, 0.044, 3)
+        self.assertAlmostEqual(
+            pf.desired_portfolio.score, 16.123, 3)
 
 
 if __name__ == '__main__':
