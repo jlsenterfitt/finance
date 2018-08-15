@@ -34,7 +34,7 @@ class Test_Stock(unittest.TestCase):
         self.stock.return_array = test_data
         self.assertAlmostEqual(
             self.stock._getMeanAnnualReturn(),
-            np.power(1.015, Config.DAYS_IN_YEAR))
+            np.power(1.0149876846543509, Config.DAYS_IN_YEAR))
 
     def test_getStDevAnnualReturn(self):
         test_data = np.array(

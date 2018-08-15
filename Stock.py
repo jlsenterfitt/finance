@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.stats import t
+from scipy.stats.mstats import gmean
 
 import Config
 
@@ -50,7 +51,7 @@ class Stock(object):
             mean_annual_return {float}: Artihmetic mean of daily stock returns,
                 extrapolated out to one year.
         """
-        return np.power(np.mean(self.return_array), Config.DAYS_IN_YEAR)
+        return np.power(gmean(self.return_array), Config.DAYS_IN_YEAR)
 
     def _getStDevAnnualReturn(self):
         """Calculate the standard deviation of annual returns from return_array.
