@@ -135,7 +135,7 @@ def writeDesiredPortfolio(portfolio, stock_db, filename):
         writer = csv.writer(csvfile)
         writer.writerow(['Ticker', 'Allocation'])
         for i, ticker in enumerate(stock_db.tickers):
-            writer.writerow([portfolio.allocation_array[i], ticker])
+            writer.writerow([ticker, portfolio.allocation_array[i]])
 
 
 def writeStockDatabase(stock_db, filename):
