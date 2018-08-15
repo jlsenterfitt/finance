@@ -70,13 +70,12 @@ def main():
     print('Optimizing portfolio...')
     pf = PortfolioFactory(stock_db, required_return)
     desired_portfolio = pf.desired_portfolio
-    print(stock_db.tickers)
-    print(desired_portfolio.allocation_array)
-    print(desired_portfolio.score)
+    print('IRR: %f' % required_return)
+    print('Score: %f' % desired_portfolio.score)
 
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(
-        desired_portfolio, 'data/DesiredPortfolio.csv')
+        desired_portfolio, stock_db, 'data/DesiredPortfolio.csv')
 
     tf = getTrades(current_portfolio, desired_portfolio)
 

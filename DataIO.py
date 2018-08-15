@@ -123,15 +123,19 @@ def writeTrades(trade_factory, filename):
     pass
 
 
-def writeDesiredPortfolio(portfolio, filename):
+def writeDesiredPortfolio(portfolio, stock_db, filename):
     """Write the desired portfolio to disk.
 
     Args:
         portfolio {Portfolio}: The portfolio to write.
+        stock_db {StockDatabase}: Database of stock information.
         filename {string}: Where to write the data.
     """
-    # TODO-implement
-    pass
+    with open(filename, 'wb') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Ticker', 'Allocation'])
+        for i, ticker in enumerate(stock_db.tickers):
+            writer.writerow([portfolio.allocation_array[i], ticker])
 
 
 def writeStockDatabase(stock_db, filename):

@@ -52,6 +52,8 @@ class PortfolioFactory(object):
                 for buy in xrange(len(best)):
                     if buy == sell:
                         continue
+                    if best[sell] < tradeAmount:
+                        continue
 
                     curr = np.copy(best)
                     curr[sell] -= tradeAmount
