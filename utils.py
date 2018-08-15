@@ -12,6 +12,7 @@ def getRequiredReturn(cash_flow_list, funds_available):
     Returns:
         required_return {float}: Rate required to break even for all years.
     """
+    # TODO: This should just ask the user for input.
     cash_flows = [funds_available]
     cash_flows.extend(cash_flow_list)
     irr = np.irr(cash_flows)

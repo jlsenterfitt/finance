@@ -74,6 +74,7 @@ def main():
     print('Score: %f' % desired_portfolio.score)
 
     # Write desired portfolio.
+    # TODO: These need to be validated.
     DataIO.writeDesiredPortfolio(
         desired_portfolio, stock_db, 'data/DesiredPortfolio.csv')
 
