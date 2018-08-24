@@ -58,6 +58,8 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
         cache_data = _retrieveCache(cache_filename)
     else:
         cache_data = {}
+    # TODO: Split missing tickers into groups, write to cache after each batch.
+    # Maybe per sqrt?
     # Determine missing keys and call API for them.
     missing_tickers = set(ticker_list).difference(set(cache_data.keys()))
     print('Getting %d missing tickers.' % len(missing_tickers))
@@ -181,6 +183,7 @@ def _retrieveCache(filename):
             raw_contents = f.read()
             contents = pickle.loads(raw_contents)
         for ticker in contents.keys():
+            # TODO: Should randomly remove 1/48 tickers each time. Keeps cache-refresh time down.
             # Remove any tickers more than 24 hours old.
             if contents[ticker]['_timestamp'] < time() - 24 * 60 * 60:
                 del contents[ticker]
