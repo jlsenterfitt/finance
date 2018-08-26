@@ -61,9 +61,12 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
     # Determine missing keys and call API for them.
     missing_tickers = set(ticker_list).difference(set(cache_data.keys()))
     print('Getting %d missing tickers.' % len(missing_tickers))
-    cache_data.update(_getAPIData(missing_tickers))
-    # Store cache, then strip out _timetstamp.
-    _storeCache(cache_filename, cache_data)
+    # Hack: To get the cache to store after each API call, I'm passing the
+    # tickers once at a time. I could refactor, but I'm feeling lazy.
+    for ticker in missing_tickers:
+        cache_data.update(_getAPIData([ticker]))
+        # Store cache, then strip out _timetstamp.
+        _storeCache(cache_filename, cache_data)
     for ticker in cache_data:
         if '_timestamp' in cache_data[ticker]:
             del cache_data[ticker]['_timestamp']
