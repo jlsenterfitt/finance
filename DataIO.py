@@ -186,7 +186,6 @@ def _retrieveCache(filename):
             raw_contents = f.read()
             contents = pickle.loads(raw_contents)
         for ticker in contents.keys():
-            # TODO: Should randomly remove 1/48 tickers each time. Keeps cache-refresh time down.
             # Remove any tickers more than 24 hours old.
             if contents[ticker]['_timestamp'] < time() - 24 * 60 * 60:
                 del contents[ticker]
