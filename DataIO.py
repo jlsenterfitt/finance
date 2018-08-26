@@ -58,10 +58,13 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
         cache_data = _retrieveCache(cache_filename)
     else:
         cache_data = {}
-    # TODO: Split missing tickers into groups, write to cache after each batch.
-    # Maybe per sqrt?
+    available_keys = sorted(
+        cache_data.keys(), key=lambda ticker: cache_data[ticker]['_timestamp'])
+    # Hack: Remove oldest tickers to slowly refresh cache throughout day.
+    for _ in xrange(len(available_keys) / (24 * 3)):
+        del available_keys[0]
     # Determine missing keys and call API for them.
-    missing_tickers = set(ticker_list).difference(set(cache_data.keys()))
+    missing_tickers = set(ticker_list).difference(set(available_keys))
     print('Getting %d missing tickers.' % len(missing_tickers))
     # Hack: To get the cache to store after each API call, I'm passing the
     # tickers once at a time. I could refactor, but I'm feeling lazy.
