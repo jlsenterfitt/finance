@@ -61,7 +61,7 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
     available_keys = sorted(
         cache_data.keys(), key=lambda ticker: cache_data[ticker]['_timestamp'])
     # Hack: Remove oldest tickers to slowly refresh cache throughout day.
-    for _ in xrange(len(available_keys) / (24 * 3)):
+    for _ in xrange(len(available_keys) / 24):
         del available_keys[0]
     # Determine missing keys and call API for them.
     missing_tickers = set(ticker_list).difference(set(available_keys))
