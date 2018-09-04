@@ -123,7 +123,7 @@ def getDesiredReturn(filename):
             raw_data.append(_stringToDecimal(row[0]))
     if len(raw_data) > 1:
         raise ValueError('Should only have 2 rows, a header and a value.')
-    return raw_data[0]
+    return float(raw_data[0])
 
 
 def writeTrades(trade_factory, filename):

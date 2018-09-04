@@ -23,7 +23,7 @@ class Test_getDesiredReturn(unittest.TestCase):
 
     def test(self):
         data = DataIO.getDesiredReturn('data/test.csv')
-        self.assertAlmostEqual(float(data), 1.06)
+        self.assertAlmostEqual(data, 1.06)
 
 
 class Test_getCurrentData(unittest.TestCase):
