@@ -13,6 +13,10 @@ from time import sleep, time
 
 import Config
 
+# TODO: Update cache mechanism.
+# Tickers should be written individually to a cache folder as JSON objects w/ timestamps.
+# Still discard any tickers w/o timestamps.
+
 # Config options.
 last_request_time = time()
 local_cache = {}
