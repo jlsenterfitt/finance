@@ -3,7 +3,6 @@ from Portfolio import Portfolio
 from PortfolioFactory import PortfolioFactory
 from Stock import Stock
 from StockDatabase import StockDatabase
-import utils
 
 
 def getInputData():
@@ -15,14 +14,10 @@ def getInputData():
         stock_db {StockDatabase}: A database of all necessary stock info.
     """
     # Get future expenditures.
-    cash_flow_list = DataIO.getFutureExpenditures('data/cashflows.csv')
+    required_return = DataIO.getDesiredReturn('data/desired_return.csv')
 
     # Get current allocations.
-    current_alloc_dict, funds_available = DataIO.getCurrentData(
-        'data/current_allocations.csv')
-
-    # Calculate IRR
-    required_return = utils.getRequiredReturn(cash_flow_list, funds_available)
+    current_alloc_dict = DataIO.getCurrentData('data/current_allocations.csv')
 
     # Get tickers and expense ratios.
     ticker_list, expense_ratio_dict = DataIO.getTickerList(

@@ -11,20 +11,19 @@ import unittest
 import DataIO
 
 
-class Test_getFutureExpenditures(unittest.TestCase):
+class Test_getDesiredReturn(unittest.TestCase):
     def setUp(self):
         with open('data/test.csv', 'w') as f:
             writer = csv.writer(f)
             writer.writerow(['Amount'])
-            writer.writerow([-1.0])
-            writer.writerow([1.0])
+            writer.writerow([1.06])
 
     def tearDown(self):
         os.remove('data/test.csv')
 
     def test(self):
-        data = DataIO.getFutureExpenditures('data/test.csv')
-        self.assertListEqual(data, [Decimal('-1.0'), Decimal('1.0')])
+        data = DataIO.getDesiredReturn('data/test.csv')
+        self.assertAlmostEqual(float(data), 1.06)
 
 
 class Test_getCurrentData(unittest.TestCase):
@@ -39,10 +38,8 @@ class Test_getCurrentData(unittest.TestCase):
         os.remove('data/test.csv')
 
     def test(self):
-        (current_alloc_dict,
-         funds_available) = DataIO.getCurrentData('data/test.csv')
+        current_alloc_dict = DataIO.getCurrentData('data/test.csv')
         self.assertDictEqual(current_alloc_dict, {'CASH': 0.75, 'VTI': 0.25})
-        self.assertEqual(funds_available, Decimal('400.0'))
 
 
 class Test_stringToDecimal(unittest.TestCase):

@@ -85,7 +85,6 @@ def getCurrentData(filename):
         filename {string}: Where the current investment data is stored.
     Returns:
         current_alloc_dict {dict}: Dict of tickers to percentage allocations.
-        funds_available {Decimal}: Sum of invested funds.
     """
     current_alloc_dict = {}
     funds_available = Decimal()
@@ -100,24 +99,27 @@ def getCurrentData(filename):
     for ticker in current_alloc_dict:
         current_alloc_dict[ticker] = (
             current_alloc_dict[ticker] / funds_available)
-    return current_alloc_dict, funds_available
+    return current_alloc_dict
 
 
-def getFutureExpenditures(filename):
-    """Read expected future expenditures.
+def getDesiredReturn(filename):
+    """Read desired return.
 
     Args:
         filename {string}: Where the data is stored.
     Returns:
-        expenditure_list {list}: List of expected expenditures.
+        desired_return {float}: The desired return as a float
+            (e.g., 1.06 for a 6% return).
     """
-    expenditure_list = []
+    raw_data = []
     with open(filename, 'r') as f:
         reader = csv.reader(f)
         reader.next()  # Header
         for row in reader:
-            expenditure_list.append(_stringToDecimal(row[0]))
-    return expenditure_list
+            raw_data.append(_stringToDecimal(row[0]))
+    if len(raw_data) > 1:
+        raise ValueError('Should only have 2 rows, a header and a value.')
+    return raw_data[0]
 
 
 def writeTrades(trade_factory, filename):
