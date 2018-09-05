@@ -9,12 +9,9 @@ def getInputData():
     """Get all necessary input data for running a model.
 
     Returns:
-        required_return {float}: Rate required to break even for all years.
         current_portfolio {Portfolio}: A Portfolio of current investments.
         stock_db {StockDatabase}: A database of all necessary stock info.
     """
-    # Get future expenditures.
-    required_return = DataIO.getDesiredReturn('data/desired_return.csv')
 
     # Get current allocations.
     current_alloc_dict = DataIO.getCurrentData('data/current_allocations.csv')
@@ -39,7 +36,7 @@ def getInputData():
     current_portfolio = Portfolio(
         stock_db, percent_allocations_dict=current_alloc_dict)
 
-    return required_return, current_portfolio, stock_db
+    return current_portfolio, stock_db
 
 
 def getTrades(current_portfolio, desired_portfolio):
@@ -57,21 +54,25 @@ def getTrades(current_portfolio, desired_portfolio):
 
 def main():
     print('Reading data...')
-    (required_return, current_portfolio, stock_db) = getInputData()
+
+    # Get initial data.
+    current_portfolio, stock_db = getInputData()
 
     # Write stock database.
     DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
 
-    print('Optimizing portfolio...')
-    pf = PortfolioFactory(stock_db, required_return)
-    desired_portfolio = pf.desired_portfolio
-    print('IRR: %f' % required_return)
-    print('Score: %f' % desired_portfolio.score)
+    for i in xrange(10):
+        required_return = 1 + (i / 100.0)
 
-    # Write desired portfolio.
-    # TODO: These need to be validated.
-    DataIO.writeDesiredPortfolio(
-        desired_portfolio, stock_db, 'data/DesiredPortfolio.csv')
+        print('Optimizing portfolio for %.2f' % required_return)
+        pf = PortfolioFactory(stock_db, required_return)
+        desired_portfolio = pf.desired_portfolio
+        print('IRR: %f' % required_return)
+        print('Score: %f' % desired_portfolio.score)
+
+        # Write desired portfolio.
+        DataIO.writeDesiredPortfolio(
+            desired_portfolio, stock_db, 'data/DesiredPortfolio_%d.csv' % i)
 
     tf = getTrades(current_portfolio, desired_portfolio)
 
