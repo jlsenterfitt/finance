@@ -1,5 +1,3 @@
-from multiprocessing import Pool
-
 import DataIO
 from Portfolio import Portfolio
 from PortfolioFactory import PortfolioFactory
@@ -54,16 +52,14 @@ def getTrades(current_portfolio, desired_portfolio):
     return {}
 
 
-def optimizeForReturn(iteration, stock_db):
+def optimizeForReturn(required_return, stock_db):
     """Optimize and write a solution for a given return.
 
     Args:
-        iteration (int): Which iteration to run.
+        required_return (float): What return to require.
         stock_db {StockDatabase}: A database of all necessary stock info.
     """
-    required_return = 1 + (iteration / 100.0)
-
-    print('Optimizing portfolio for %.2f' % required_return)
+    print('Optimizing portfolio for %.3f' % required_return)
     pf = PortfolioFactory(stock_db, required_return)
     desired_portfolio = pf.desired_portfolio
     print('IRR: %f' % required_return)
@@ -71,13 +67,16 @@ def optimizeForReturn(iteration, stock_db):
 
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(
-        desired_portfolio, stock_db, 'data/DesiredPortfolio_%d.csv' % iteration)
+        desired_portfolio, stock_db, (
+            'data/DesiredPortfolio_%.3f.csv' % required_return))
 
-    print('Finished for %.2f' % required_return)
+    print('Finished for %.3f' % required_return)
+
+    return desired_portfolio
 
 
 def main():
-    pool = Pool()
+    required_return = raw_input('Desired Return: ')
     print('Reading data...')
 
     # Get initial data.
@@ -86,17 +85,12 @@ def main():
     # Write stock database.
     DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
 
-    results = []
-    for i in xrange(10):
-        results.append(pool.apply_async(optimizeForReturn, (i, stock_db)))
+    desired_portfolio = optimizeForReturn(required_return, stock_db)
 
-    for result in results:
-        result.wait(600)
-
-    # tf = getTrades(current_portfolio, desired_portfolio)
+    tf = getTrades(current_portfolio, desired_portfolio)
 
     # Print trade factory.
-    # DataIO.writeTrades(tf, 'data/Trades.csv')
+    DataIO.writeTrades(tf, 'data/Trades.csv')
 
 
 if __name__ == '__main__':
