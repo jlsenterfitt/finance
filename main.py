@@ -61,7 +61,7 @@ def optimizeForReturn(required_return, stock_db):
         required_return (float): What return to require.
         stock_db {StockDatabase}: A database of all necessary stock info.
     """
-    print('Optimizing portfolio for %.3f' % required_return)
+    print('Optimizing portfolio for %f' % required_return)
     pf = PortfolioFactory(stock_db, required_return)
     desired_portfolio = pf.desired_portfolio
     print('IRR: %f' % required_return)
@@ -70,19 +70,19 @@ def optimizeForReturn(required_return, stock_db):
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(
         desired_portfolio, stock_db, (
-            'data/DesiredPortfolio_%.3f.csv' % required_return))
+            'data/DesiredPortfolio.csv' % required_return))
 
-    print('Finished for %.3f' % required_return)
+    print('Finished for %f' % required_return)
 
     return desired_portfolio
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--desired_return', type=float, help='The desired return.')
+    parser.add_argument('--desired_return', type=float,
+                        help='The desired return.')
     args = parser.parse_args()
 
-    
     required_return = args.desired_return
     print('Reading data...')
 
