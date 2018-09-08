@@ -1,3 +1,5 @@
+import argparse
+
 import DataIO
 from Portfolio import Portfolio
 from PortfolioFactory import PortfolioFactory
@@ -76,7 +78,12 @@ def optimizeForReturn(required_return, stock_db):
 
 
 def main():
-    required_return = raw_input('Desired Return: ')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--desired_return', type=float, help='The desired return.')
+    args = parser.parse_args()
+
+    
+    required_return = args.desired_return
     print('Reading data...')
 
     # Get initial data.
