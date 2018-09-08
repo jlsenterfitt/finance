@@ -78,12 +78,16 @@ def optimizeForReturn(required_return, stock_db):
 
 
 def main():
+    # TODO: See if this can be emailed.
     parser = argparse.ArgumentParser()
     parser.add_argument('--desired_return', type=float,
                         help='The desired return.')
     args = parser.parse_args()
-
     required_return = args.desired_return
+
+    if not args.desired_return:
+        raise ValueError('Desired return must be specified.')
+
     print('Reading data...')
 
     # Get initial data.
