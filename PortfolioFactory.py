@@ -42,7 +42,8 @@ class PortfolioFactory(object):
         bestScore = portfolio.getScore(self._required_return)
 
         tradeAmount = 1
-        while tradeAmount >= 0.00001:
+        # Run until rounding is +/- 1 basis point.
+        while tradeAmount >= 0.00005:
             improved = False
 
             for sell in xrange(len(best)):
