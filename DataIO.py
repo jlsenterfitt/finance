@@ -73,11 +73,10 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
     print('Getting %d missing tickers.' % len(missing_tickers))
     # Hack: To get the cache to store after each API call, I'm passing the
     # tickers once at a time. I could refactor, but I'm feeling lazy.
-    for ticker in missing_tickers:
-        cache_data.update(_getAPIData([ticker]))
-        # Store cache, then strip out _timetstamp.
-        _storeCache(cache_filename, cache_data) # TODO: Remove? Need to check tests.
-        _storeCache('cache_files/' + ticker + '.pkl.bz2', cache_data[ticker])
+    cache_data.update(_getAPIData(missing_tickers))
+    # Store cache, then strip out _timetstamp.
+    # TODO: Remove? Need to check tests.
+    _storeCache(cache_filename, cache_data)
     for ticker in cache_data:
         if '_timestamp' in cache_data[ticker]:
             del cache_data[ticker]['_timestamp']
@@ -204,7 +203,7 @@ def _retrieveCacheFiles():
                 continue
             ticker = filename.split('.')[0]
             output[ticker] = OrderedDict(
-                    sorted(contents.items(), key=lambda t: t[0]))
+                sorted(contents.items(), key=lambda t: t[0]))
         except IOError:
             continue
     return output
@@ -232,9 +231,11 @@ def _getAPIData(ticker_list):
             has a _timestamp entry saying when it was pulled.
     """
     cache_data = {}
-    for ticker in ticker_list:
-        print('Retrieving ticker %s' % ticker)
+    for t, ticker in enumerate(ticker_list):
+        print('Retrieving ticker %d of %d (%s)' %
+              (t + 1, len(ticker_list), ticker))
         cache_data.update(_callApi(ticker))
+        _storeCache('cache_files/' + ticker + '.pkl.bz2', cache_data[ticker])
     return cache_data
 
 
