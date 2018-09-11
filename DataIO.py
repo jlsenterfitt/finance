@@ -6,6 +6,7 @@ import bz2
 from collections import OrderedDict
 import csv
 from decimal import Decimal
+import os
 import pickle
 from re import sub
 import requests
@@ -59,13 +60,13 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
         raw_data {dict}: dict of tickers to dates to prices.
     """
     if use_cache:
-        cache_data = _retrieveCache(cache_filename)
+        cache_data = _retrieveCacheFiles()
     else:
         cache_data = {}
     available_keys = sorted(
         cache_data.keys(), key=lambda ticker: cache_data[ticker]['_timestamp'])
     # Hack: Remove oldest tickers to slowly refresh cache throughout day.
-    for _ in xrange(len(available_keys) / 24):
+    for _ in xrange(len(available_keys) / 30):
         del available_keys[0]
     # Determine missing keys and call API for them.
     missing_tickers = set(ticker_list).difference(set(available_keys))
@@ -75,7 +76,8 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
     for ticker in missing_tickers:
         cache_data.update(_getAPIData([ticker]))
         # Store cache, then strip out _timetstamp.
-        _storeCache(cache_filename, cache_data)
+        _storeCache(cache_filename, cache_data) # TODO: Remove? Need to check tests.
+        _storeCache('cache_files/' + ticker + '.pkl.bz2', cache_data[ticker])
     for ticker in cache_data:
         if '_timestamp' in cache_data[ticker]:
             del cache_data[ticker]['_timestamp']
@@ -180,32 +182,32 @@ def writeStockDatabase(stock_db, filename):
             writer.writerow(new_row)
 
 
-def _retrieveCache(filename):
-    """Retrieve valid data in the cache.
+def _retrieveCacheFiles():
+    """Retrieve valid cache files.
 
-    Args:
-        filename {string}: The cache's filepath.
     Returns:
         cache_data {dict}: Dict of tickers to dates to prices. Each ticker also
             has a _timestamp entry saying when it was pulled.
     """
-    contents = {}
-    try:
-        with bz2.BZ2File(filename, 'r') as f:
-            raw_contents = f.read()
-            contents = pickle.loads(raw_contents)
-        for ticker in contents.keys():
-            # TODO: Reset to 24 hours, setting to 1 month for testing.
-            # Remove any tickers more than 24 hours old.
-            if contents[ticker]['_timestamp'] < time() - 30 * 24 * 60 * 60:
-                del contents[ticker]
-            else:
-                raw_data = contents[ticker]
-                contents[ticker] = OrderedDict(
-                    sorted(raw_data.items(), key=lambda t: t[0]))
-    except IOError:
-        contents = {}
-    return contents
+    filenames = os.listdir('./cache_files')
+    output = {}
+    for filename in filenames:
+        full_name = 'cache_files/' + filename
+        try:
+            with bz2.BZ2File(full_name, 'r') as f:
+                raw_contents = f.read()
+                try:
+                    contents = pickle.loads(raw_contents)
+                except KeyError:
+                    raise IOError
+            if contents['_timestamp'] < time() - 31 * 24 * 60 * 60:
+                continue
+            ticker = filename.split('.')[0]
+            output[ticker] = OrderedDict(
+                    sorted(contents.items(), key=lambda t: t[0]))
+        except IOError:
+            continue
+    return output
 
 
 def _storeCache(filename, cache_data):
