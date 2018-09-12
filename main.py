@@ -1,5 +1,7 @@
 import argparse
+import math
 
+import Config
 import DataIO
 from Portfolio import Portfolio
 from PortfolioFactory import PortfolioFactory
@@ -65,14 +67,16 @@ def optimizeForReturn(required_return, stock_db):
     pf = PortfolioFactory(stock_db, required_return)
     desired_portfolio = pf.desired_portfolio
     print('Required Return: %f' % required_return)
-    print('Expected Return: %f' % desired_portfolio.average_return)
+    print('Expected Return: %f' % math.pow(
+        desired_portfolio.average_return, Config.DAYS_IN_YEAR))
     print('Downside Risk: %f' % desired_portfolio.downside_risk)
     print('Downside Correl: %f' % desired_portfolio.downside_correl)
     print('Score: %f' % desired_portfolio.score)
 
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(
-        desired_portfolio, stock_db, 'data/DesiredPortfolio%.4f.csv' % required_return)
+        desired_portfolio, stock_db,
+        'data/DesiredPortfolio%.4f.csv' % required_return)
 
     print('Finished for %f' % required_return)
 
