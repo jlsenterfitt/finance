@@ -29,7 +29,7 @@ def getInputData():
 
     # Create all stock objects.
     stock_dict = {}
-    for ticker in raw_data:
+    for ticker in ticker_list:
         stock_dict[ticker] = Stock(
             raw_data[ticker], ticker, expense_ratio_dict[ticker])
 
