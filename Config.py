@@ -5,11 +5,11 @@ DAYS_IN_YEAR = 261
 INITIAL_PERCENTILE = 0.5
 
 # This forces us to only use tickers that were around during the dot-com bust.
-# Over time it will become more stringent, capping at requiring 28 years of data.
-# 28 years of data should include 3-4 major recessions.
+# Over time it will become more stringent, capping at requiring 21 years of data.
+# 21 years of data should include 2-3 major recessions.
 MIN_YEARS = min(
     (datetime.date.today() - datetime.date(1984, 1, 1)).days / (2.0 * 365),
-    28)
+    21)
 MINIMUM_AMOUNT_DATA = MIN_YEARS * DAYS_IN_YEAR
 
 with open('api_key_ignore_.txt', 'r') as f:
