@@ -142,11 +142,16 @@ def writeDesiredPortfolio(portfolio, stock_db, filename):
         stock_db {StockDatabase}: Database of stock information.
         filename {string}: Where to write the data.
     """
+    output_data = []
+    for i, ticker in enumerate(stock_db.tickers):
+        output_data.append([ticker, portfolio.allocation_array[i]])
+    
+    sorted_output_data = sorted(output_data, key=lambda a: a[1], reverse=True)
+    sorted_output_data.insert(0, ['Ticker', 'Allocation'])
+
     with open(filename, 'wb') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Ticker', 'Allocation'])
-        for i, ticker in enumerate(stock_db.tickers):
-            writer.writerow([ticker, portfolio.allocation_array[i]])
+        writer.writerows(sorted_output_data)
 
 
 def writeStockDatabase(stock_db, filename):
