@@ -23,7 +23,7 @@ def getInputData():
         'data/tickers_expenses.csv')
 
     # Get raw data.
-    raw_data = DataIO.getRawData(ticker_list, 'data/cache.pkl.bz2')
+    raw_data = DataIO.getRawData(ticker_list)
 
     # Create all stock objects.
     stock_dict = {}
@@ -64,7 +64,10 @@ def optimizeForReturn(required_return, stock_db):
     print('Optimizing portfolio for %f' % required_return)
     pf = PortfolioFactory(stock_db, required_return)
     desired_portfolio = pf.desired_portfolio
-    print('IRR: %f' % required_return)
+    print('Required Return: %f' % required_return)
+    print('Expected Return: %f' % desired_portfolio.average_return)
+    print('Downside Risk: %f' % desired_portfolio.downside_risk)
+    print('Downside Correl: %f' % desired_portfolio.downside_correl)
     print('Score: %f' % desired_portfolio.score)
 
     # Write desired portfolio.

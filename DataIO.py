@@ -45,7 +45,7 @@ def getTickerList(filename):
     return ticker_list, expense_ratio_dict
 
 
-def getRawData(ticker_list, cache_filename, use_cache=True):
+def getRawData(ticker_list, use_cache=True):
     """Check for valid cache data, or get raw stock data via API and cache it.
 
     First loads the cache, then strips any outdated data.
@@ -54,7 +54,6 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
     Strips the data of _timestamp entries, and returns the result.
     Args:
         ticker_list {list}: List of ticker symbols.
-        cache_filename {string}: Where the cache is located.
         use_cache {boolean}: Whether to use the saved cache.
     Returns:
         raw_data {dict}: dict of tickers to dates to prices.
@@ -74,9 +73,6 @@ def getRawData(ticker_list, cache_filename, use_cache=True):
     # Hack: To get the cache to store after each API call, I'm passing the
     # tickers once at a time. I could refactor, but I'm feeling lazy.
     cache_data.update(_getAPIData(missing_tickers))
-    # Store cache, then strip out _timetstamp.
-    # TODO: Remove? Need to check tests.
-    _storeCache(cache_filename, cache_data)
     for ticker in cache_data:
         if '_timestamp' in cache_data[ticker]:
             del cache_data[ticker]['_timestamp']
@@ -181,6 +177,26 @@ def writeStockDatabase(stock_db, filename):
             writer.writerow(new_row)
 
 
+def _retrieveCache(filename):
+    """Pull data from a specific cache file.
+
+    Args:
+        filename {string}: Name of the cache file to read.
+    Returns:
+        contents {dict}: Dict of tickers to dates to prices. Each ticker also
+            has a _timestamp entry saying when it was pulled.
+    """
+    with bz2.BZ2File(filename, 'r') as f:
+        raw_contents = f.read()
+        try:
+            contents = pickle.loads(raw_contents)
+            if contents['_timestamp'] < time() - 31 * 24 * 60 * 60:
+                return {}
+        except KeyError:
+            raise IOError
+    return contents
+
+
 def _retrieveCacheFiles():
     """Retrieve valid cache files.
 
@@ -193,14 +209,7 @@ def _retrieveCacheFiles():
     for filename in filenames:
         full_name = 'cache_files/' + filename
         try:
-            with bz2.BZ2File(full_name, 'r') as f:
-                raw_contents = f.read()
-                try:
-                    contents = pickle.loads(raw_contents)
-                except KeyError:
-                    raise IOError
-            if contents['_timestamp'] < time() - 31 * 24 * 60 * 60:
-                continue
+            contents = _retrieveCache(full_name)
             ticker = filename.split('.')[0]
             output[ticker] = OrderedDict(
                 sorted(contents.items(), key=lambda t: t[0]))
