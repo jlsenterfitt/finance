@@ -26,7 +26,7 @@ class PortfolioFactory(object):
             the same logic, and continue until an insignificant amount is being
             traded.
 
-        Theorhetically this could fall prey to local maxima, so improvements
+        Theoretically this could fall prey to local maxima, so improvements
             should be sought.
         TODO: Attempt Simulated Annealing.
 
@@ -34,49 +34,49 @@ class PortfolioFactory(object):
             desired_allocations {dict}: Dictionary of tickers to percent
                 allocations.
         """
-        minorSteps = 0
-        majorSteps = 0
+        minor_steps = 0
+        major_steps = 0
         best = np.zeros(len(self._stock_db.tickers))
         best[0] = 1
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
-        bestScore = portfolio.getScore(self._required_return)
+        best_score = portfolio.getScore(self._required_return)
 
-        tradeAmount = 1
+        trade_amount = 1
         # Run until rounding is +/- 1 basis point.
-        while tradeAmount >= 0.00005:
+        while trade_amount >= 0.00005:
             improved = False
 
             for sell in xrange(len(best)):
-                if best[sell] < tradeAmount:
+                if best[sell] < trade_amount:
                     continue
 
                 for buy in xrange(len(best)):
                     if buy == sell:
                         continue
-                    if best[sell] < tradeAmount:
+                    if best[sell] < trade_amount:
                         continue
 
                     curr = np.copy(best)
-                    curr[sell] -= tradeAmount
-                    curr[buy] += tradeAmount
+                    curr[sell] -= trade_amount
+                    curr[buy] += trade_amount
 
                     portfolio = Portfolio(
                         self._stock_db, percent_allocations=curr)
-                    currScore = portfolio.getScore(self._required_return)
+                    curr_score = portfolio.getScore(self._required_return)
 
-                    minorSteps += 1
-                    if currScore > bestScore:
-                        bestScore = currScore
+                    minor_steps += 1
+                    if curr_score > best_score:
+                        best_score = curr_score
                         best = np.copy(curr)
                         improved = True
-                        majorSteps += 1
+                        major_steps += 1
 
             if not improved:
-                tradeAmount /= 2.0
+                trade_amount /= 2.0
 
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
         portfolio.getScore(self._required_return)
 
-        print ('Major steps %d' % majorSteps)
-        print ('Minor steps %d' % minorSteps)
+        print ('Major steps %d' % major_steps)
+        print ('Minor steps %d' % minor_steps)
         return portfolio
