@@ -191,15 +191,23 @@ def _retrieveCache(filename):
         contents {dict}: Dict of tickers to dates to prices. Each ticker also
             has a _timestamp entry saying when it was pulled.
     """
-    with bz2.BZ2File(filename, 'r') as f:
-        raw_contents = f.read()
-        try:
-            contents = pickle.loads(raw_contents)
-            if contents['_timestamp'] < time() - 31 * 24 * 60 * 60:
-                return {}
-        except KeyError:
-            raise IOError
-    return contents
+    output = {}
+    try:
+        full_name = 'cache_files/' + filename
+        with bz2.BZ2File(full_name, 'r') as f:
+            raw_contents = f.read()
+            try:
+                contents = pickle.loads(raw_contents)
+                if contents['_timestamp'] < time() - 31 * 24 * 60 * 60:
+                    return {}
+            except KeyError:
+                raise IOError
+        ticker = filename.split('.')[0]
+        output = {}
+        output[ticker] = OrderedDict(sorted(contents.items(), key=lambda t: t[0]))
+    except IOError:
+        pass
+    return output
 
 
 def _retrieveCacheFiles():
@@ -211,15 +219,9 @@ def _retrieveCacheFiles():
     """
     filenames = os.listdir('./cache_files')
     output = {}
-    for filename in filenames:
-        full_name = 'cache_files/' + filename
-        try:
-            contents = _retrieveCache(full_name)
-            ticker = filename.split('.')[0]
-            output[ticker] = OrderedDict(
-                sorted(contents.items(), key=lambda t: t[0]))
-        except IOError:
-            continue
+    content_dicts = map(_retrieveCache, filenames)
+    for content_dict in content_dicts:
+        output.update(content_dict)
     return output
 
 
@@ -271,7 +273,12 @@ def _callApi(ticker):
         sleep(max(
             0,
             Config.MIN_TIME_BETWEEN_CALLS - (time() - last_request_time)))
-        result = requests.get(Config.BASE_REQUEST + ticker).json()
+        raw_result = requests.get(Config.BASE_REQUEST + ticker)
+        try:
+            result = raw_result.json()
+        except ValueError as e:
+            print(raw_result)
+            raise e
 
     # Extract the date-price pairs.
     data = {}
