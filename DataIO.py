@@ -269,6 +269,8 @@ def _callApi(ticker):
     if ticker in local_cache:
         return local_cache[ticker]
     result = {}
+    # Track the number of 503s in case the server is down for an extended period.
+    count_503s = 0
     while 'Time Series (Daily)' not in result:
         sleep(max(
             0,
@@ -276,6 +278,11 @@ def _callApi(ticker):
         raw_result = requests.get(Config.BASE_REQUEST + ticker)
         try:
             result = raw_result.json()
+            if result.status_code == 503:
+                count_503s += 1
+                if count_503s >= 60:
+                    raise IOError('Too many 503s from API.')
+                continue
         except ValueError as e:
             print(raw_result)
             raise e
