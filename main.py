@@ -88,7 +88,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--desired_return', type=float,
                         help='The desired return.')
-    parser.add_argument('--solve', type=bool, default=True, help='Whether or not to Solve.')
+    parser.add_argument('--solve', dest='solve', action='store_true')
+    parser.add_argument('--no-solve', dest='solve', action='store_false')
+    parser.set_defaults(solve=True)
     args = parser.parse_args()
     required_return = args.desired_return
 
@@ -104,7 +106,7 @@ def main():
     DataIO.writeStockDatabase(stock_db, 'data/StockDatabase.csv')
 
     if not args.solve:
-      return
+        return
 
     desired_portfolio = optimizeForReturn(required_return, stock_db)
 
