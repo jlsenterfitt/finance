@@ -277,12 +277,12 @@ def _callApi(ticker):
             Config.MIN_TIME_BETWEEN_CALLS - (time() - last_request_time)))
         raw_result = requests.get(Config.BASE_REQUEST + ticker)
         try:
-            result = raw_result.json()
-            if result.status_code == 503:
+            if raw_result.status_code == 503:
                 count_503s += 1
                 if count_503s >= 60:
                     raise IOError('Too many 503s from API.')
                 continue
+            result = raw_result.json()
         except ValueError as e:
             print(raw_result)
             raise e
