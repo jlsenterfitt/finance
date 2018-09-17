@@ -7,7 +7,7 @@ from collections import OrderedDict
 import csv
 from decimal import Decimal
 import os
-import pickle
+import cPickle as pickle
 from re import sub
 import requests
 from time import sleep, time
