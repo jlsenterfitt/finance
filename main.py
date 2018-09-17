@@ -77,7 +77,7 @@ def optimizeForReturn(required_return, stock_db):
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(
         desired_portfolio, stock_db,
-        'data/DesiredPortfolio%.4f.csv' % required_return)
+        'data/DesiredPortfolio_%.4f_%s.csv' % (required_return, Config.TODAY.date()))
 
     print('Finished for %f' % required_return)
 
