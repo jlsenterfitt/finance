@@ -19,3 +19,5 @@ MIN_TIME_BETWEEN_CALLS = 1.0
 BASE_REQUEST = (
     'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&apikey=' +
     API_KEY + '&outputsize=' + SIZE + '&symbol=')
+
+TODAY = datetime.datetime.today()

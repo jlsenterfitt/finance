@@ -7,7 +7,9 @@ from collections import OrderedDict
 import csv
 from decimal import Decimal
 import os
-import pickle
+import cPickle as pickle
+import math
+from multiprocessing.pool import ThreadPool as Pool
 from re import sub
 import requests
 from time import sleep, time
@@ -219,7 +221,9 @@ def _retrieveCacheFiles():
     """
     filenames = os.listdir('./cache_files')
     output = {}
-    content_dicts = map(_retrieveCache, filenames)
+    pool = Pool(4)
+    content_dicts = pool.map(_retrieveCache, filenames, int(math.ceil(math.sqrt(len(filenames)))))
+    pool.close()
     for content_dict in content_dicts:
         output.update(content_dict)
     return output

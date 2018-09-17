@@ -73,6 +73,9 @@ class PortfolioFactory(object):
 
             if not improved:
                 trade_amount /= 2.0
+                print('New trade amount: %f' % trade_amount)
+            else:
+                print('Improvements: %d, score: %f' % (major_steps, best_score))
 
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
         portfolio.getScore(self._required_return)

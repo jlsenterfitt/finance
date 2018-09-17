@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import math
 
 import Config
@@ -91,12 +92,16 @@ def main():
                         help='The desired return.')
     parser.add_argument('--solve', dest='solve', action='store_true')
     parser.add_argument('--no-solve', dest='solve', action='store_false')
+    parser.add_argument('--set_date', type=str, help='Some date to run as')
     parser.set_defaults(solve=True)
     args = parser.parse_args()
     required_return = args.desired_return
 
     if not args.desired_return:
         raise ValueError('Desired return must be specified.')
+
+    if args.set_date:
+        Config.TODAY = datetime.datetime.strptime(args.set_date, '%Y-%m-%d')
 
     print('Reading data...')
 

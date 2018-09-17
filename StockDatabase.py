@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import datetime
 import numpy as np
 
 import Config
@@ -52,6 +53,8 @@ class StockDatabase(object):
         # Remove dates w/ missing tickers.
         for date in date_dict.keys():
             if len(date_dict[date].keys()) < len(self.stock_dict.keys()):
+                del date_dict[date]
+            elif datetime.datetime.strptime(date, '%Y-%m-%d') > Config.TODAY:
                 del date_dict[date]
 
         # Order the dates.
