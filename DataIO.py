@@ -221,7 +221,7 @@ def _retrieveCacheFiles():
     """
     filenames = os.listdir('./cache_files')
     output = {}
-    pool = Pool(4)
+    pool = Pool()
     content_dicts = pool.map(_retrieveCache, filenames, int(math.ceil(math.sqrt(len(filenames)))))
     pool.close()
     for content_dict in content_dicts:
