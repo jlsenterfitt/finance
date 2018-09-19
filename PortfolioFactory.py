@@ -1,4 +1,4 @@
-from multiprocessing.pool import ThreadPool as Pool
+from multiprocessing.dummy import Pool
 import numpy as np
 
 from Portfolio import Portfolio
@@ -67,7 +67,7 @@ class PortfolioFactory(object):
         best[0] = 1
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
         best_score = portfolio.getScore(self._required_return)
-        pool = Pool(4)
+        pool = Pool()
 
         trade_amount = 1
         # Run until rounding is +/- 1 basis point.
