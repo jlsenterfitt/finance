@@ -61,7 +61,7 @@ def getRawData(ticker_list, use_cache=True):
         raw_data {dict}: dict of tickers to dates to prices.
     """
     if use_cache:
-        cache_data = _retrieveCacheFiles()
+        cache_data = _retrieveCacheFiles(ticker_list)
     else:
         cache_data = {}
     available_keys = sorted(
@@ -212,7 +212,7 @@ def _retrieveCache(filename):
     return output
 
 
-def _retrieveCacheFiles():
+def _retrieveCacheFiles(ticker_list):
     """Retrieve valid cache files.
 
     Returns:
@@ -220,6 +220,8 @@ def _retrieveCacheFiles():
             has a _timestamp entry saying when it was pulled.
     """
     filenames = os.listdir('./cache_files')
+    # Remove any files we aren't actively looking for.
+    filenames = [filename for filename in filenames if filename.split('.')[0] in ticker_list]
     output = {}
     pool = Pool()
     content_dicts = pool.map(_retrieveCache, filenames, int(math.ceil(math.sqrt(len(filenames)))))
