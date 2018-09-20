@@ -23,7 +23,6 @@ class Portfolio(object):
         self._stock_db = stock_db
         self.allocation_array = self._getPercentAllocations(
             percent_allocations, percent_allocations_dict)
-        # TODO: These returns should build in expense ratios.
         self.backtested_returns = self._getBacktestedReturns()
         self.average_return = gmean(self.backtested_returns)
 

@@ -80,4 +80,10 @@ class StockDatabase(object):
         """
         prices = self.price_array[1:]
         prev_prices = self.price_array[:-1]
-        return prices / prev_prices
+        raw_price_changes = prices / prev_prices
+        expense_array = np.array([self.stock_dict[ticker].expense_ratio for ticker in self.tickers], dtype=np.float64)
+        expense_array = np.power(expense_array + 1.0, 1.0 / Config.DAYS_IN_YEAR) - 1.0
+        expense_array = 1.0 - expense_array
+        price_changes = raw_price_changes * np.transpose(expense_array[:, None])
+        return price_changes
+

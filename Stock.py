@@ -42,7 +42,10 @@ class Stock(object):
         Returns:
             return_array {Array}: Array of daily stock returns.
         """
-        return self._price_array[1:] / self._price_array[:-1]
+        raw_price_array = self._price_array[1:] / self._price_array[:-1]
+        daily_expense_ratio = np.power(float(1 + self.expense_ratio), 1.0 / Config.DAYS_IN_YEAR) - 1
+        price_array = raw_price_array * float(1 - daily_expense_ratio)
+        return price_array
 
     def _getMeanAnnualReturn(self):
         """Calculate the mean annual return from the return_array.

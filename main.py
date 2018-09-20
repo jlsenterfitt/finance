@@ -97,8 +97,8 @@ def main():
     args = parser.parse_args()
     required_return = args.desired_return
 
-    if not args.desired_return:
-        raise ValueError('Desired return must be specified.')
+    if not args.desired_return and args.solve:
+        raise ValueError('Desired return or no-solve must be specified.')
 
     if args.set_date:
         Config.TODAY = datetime.datetime.strptime(args.set_date, '%Y-%m-%d')
