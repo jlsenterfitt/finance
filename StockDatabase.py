@@ -20,6 +20,7 @@ class StockDatabase(object):
         self.tickers = sorted(self.stock_dict.keys())
         self.price_array = self._getFilteredPrices()
         self.price_change_array = self._getPriceChangeArray()
+        # TODO: Need to add CASH as a valid investment.
 
     def _filterStocks(self):
         """Remove stocks with too little data.
