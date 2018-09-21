@@ -85,8 +85,6 @@ def optimizeForReturn(required_return, stock_db):
 
 
 def main():
-    # TODO: See if this can be emailed.
-    # TODO: See if we can run this for 10 years ago.
     parser = argparse.ArgumentParser()
     parser.add_argument('--desired_return', type=float,
                         help='The desired return.')
