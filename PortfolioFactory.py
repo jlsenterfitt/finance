@@ -1,3 +1,4 @@
+import math
 from multiprocessing.dummy import Pool
 import numpy as np
 
@@ -18,8 +19,9 @@ class PortfolioFactory(object):
         self._required_return = required_return
         self.desired_portfolio = self._Solve()
 
-    def _SolveIndividualSell(self, best, trade_amount, best_score, sell):
+    def _SolveIndividualSell(self, input_args):
         """Check if an individual sale of stock is an improvement on the current regime."""
+        (best, trade_amount, best_score, sell) = input_args
         if best[sell] < trade_amount:
             return (best, best_score)
 
@@ -74,12 +76,14 @@ class PortfolioFactory(object):
         while trade_amount >= 0.00005:
             improved = False
 
-            results = []
+            inputs = []
             for sell in xrange(len(best)):
-                results.append(pool.apply_async(self._SolveIndividualSell, (np.copy(best), trade_amount, best_score, sell)))
+                inputs.append((np.copy(best), trade_amount, best_score, sell))
+
+            results = pool.map(self._SolveIndividualSell, inputs, int(math.ceil(math.sqrt(len(inputs)))))
 
             for result in results:
-                (curr, curr_score) = result.get(300)
+                (curr, curr_score) = result
                 if curr_score > best_score:
                   best_score = curr_score
                   best = np.copy(curr)

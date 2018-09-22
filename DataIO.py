@@ -9,7 +9,7 @@ from decimal import Decimal
 import os
 import cPickle as pickle
 import math
-from multiprocessing.pool import ThreadPool as Pool
+from multiprocessing.dummy import Pool
 from re import sub
 import requests
 from time import sleep, time

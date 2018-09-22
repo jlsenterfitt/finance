@@ -84,9 +84,11 @@ class Portfolio(object):
         required_return = np.power(required_return, 1.0 / Config.DAYS_IN_YEAR)
 
         # Short-circuit evaluation if the given portfolio is below the desired amount.
+        """
         if self.average_return < required_return:
             self.score = self.average_return - required_return
             return self.score
+        """
 
         # Determine downside_risk.
         returns = np.copy(self.backtested_returns)
