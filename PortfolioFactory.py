@@ -10,7 +10,7 @@ from Portfolio import Portfolio
 class PortfolioFactory(object):
     """Generates desired portfolio."""
 
-    def __init__(self, stock_db, required_return):
+    def __init__(self, stock_db, required_return, use_genetic=False):
         """Initialize the weight factory.
 
         Args:
@@ -19,17 +19,22 @@ class PortfolioFactory(object):
         """
         self._stock_db = stock_db
         self._required_return = required_return
-        self.desired_portfolio = self._GeneticSolve()
+        init_allocation = None
+        if use_genetic:
+            init_allocation = self._GeneticSolve().allocation_array
+        self.desired_portfolio = self._BinarySolve(
+            init_allocation=init_allocation)
 
     def _GeneticSolve(self):
         """Attempt to find an optimal solution via a genetic algorithm."""
+        print('Starting Genetic Algo...')
         generation_size = len(self._stock_db.tickers)
         best_to_keep = int(math.ceil(math.sqrt(generation_size)))
         max_portfolios = generation_size * generation_size
         num_portfolios = 0
         generation = 0
-        mutation_base_rate = 0.05
-        min_time = 30
+        mutation_rate = 0.05
+        min_time = 60
         start = time.time()
 
         # Generate initial random candidates.
@@ -60,7 +65,7 @@ class PortfolioFactory(object):
                   (generation, population[0].score))
             generation += 1
             # 2) Keeping top X%, cull randomly to under Y%.
-            while len(population) > best_to_keep:
+            while len(population) > best_to_keep * 2:
                 del population[random.randint(
                     best_to_keep, len(population) - 1)]
 
@@ -74,7 +79,7 @@ class PortfolioFactory(object):
                 # 3) Merging genes is 50/50 odds of getting each parents allocation for a stock.
                 allocations = np.zeros(len(self._stock_db.tickers))
                 for allocation_index in range(len(allocations)):
-                    if random.random() < mutation_base_rate * math.sqrt(generation):
+                    if random.random() < mutation_rate:
                         allocations[allocation_index] = random.random()
                     elif random.random() < 0.5:
                         allocations[allocation_index] = parent_1.allocation_array[allocation_index]
@@ -124,7 +129,7 @@ class PortfolioFactory(object):
 
         return (best, best_score)
 
-    def _BinarySolve(self):
+    def _BinarySolve(self, init_allocation=None):
         """Actually run the solver.
 
         Uses a binary heuristic to optimize the solution. Start with 100% in an
@@ -144,9 +149,12 @@ class PortfolioFactory(object):
             desired_allocations {dict}: Dictionary of tickers to percent
                 allocations.
         """
+        print('Starting Binary Algo...')
         major_steps = 0
-        best = np.zeros(len(self._stock_db.tickers))
-        best[0] = 1
+        if init_allocation is None:
+            init_allocation = np.zeros(len(self._stock_db.tickers))
+            init_allocation[0] = 1
+        best = init_allocation
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
         best_score = portfolio.getScore(self._required_return)
         pool = Pool()
