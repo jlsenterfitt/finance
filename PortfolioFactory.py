@@ -1,6 +1,8 @@
 import math
 from multiprocessing.dummy import Pool
 import numpy as np
+import random
+import time
 
 from Portfolio import Portfolio
 
@@ -17,7 +19,83 @@ class PortfolioFactory(object):
         """
         self._stock_db = stock_db
         self._required_return = required_return
-        self.desired_portfolio = self._BinarySolve()
+        self.desired_portfolio = self._GeneticSolve()
+
+    def _GeneticSolve(self):
+        """Attempt to find an optimal solution via a genetic algorithm."""
+        generation_size = len(self._stock_db.tickers)
+        best_to_keep = int(math.ceil(math.sqrt(generation_size)))
+        max_portfolios = generation_size * generation_size
+        num_portfolios = 0
+        generation = 0
+        mutation_base_rate = 0.05
+        min_time = 30
+        start = time.time()
+
+        # Generate initial random candidates.
+        population = []
+        for i in range(generation_size):
+            allocations = np.random.randint(2, size=generation_size)
+            allocations = allocations / (allocations.sum() + 0.0)
+            portfolio = Portfolio(
+                self._stock_db, percent_allocations=allocations)
+            portfolio.getScore(self._required_return)
+            population.append(portfolio)
+            num_portfolios += 1
+
+        # Generate some non-random candidates.
+        for i in range(generation_size):
+            allocations = np.zeros(generation_size)
+            allocations[i] = 1.0
+            portfolio = Portfolio(
+                self._stock_db, percent_allocations=allocations)
+            portfolio.getScore(self._required_return)
+            population.append(portfolio)
+            num_portfolios += 1
+        population.sort(key=lambda p: p.score, reverse=True)
+
+        # 5) Repeat 2-5 until X portfolios have been tried.
+        while (num_portfolios < max_portfolios or (time.time() - start) < min_time):
+            print('Generation %d best is %f' %
+                  (generation, population[0].score))
+            generation += 1
+            # 2) Keeping top X%, cull randomly to under Y%.
+            while len(population) > best_to_keep:
+                del population[random.randint(
+                    best_to_keep, len(population) - 1)]
+
+            # 3) Choose parents (based randomly on score) and breed.
+            while len(population) < generation_size:
+                parent_1 = random.choice(population)
+                parent_2 = random.choice(population)
+                while parent_1 == parent_2:
+                    parent_2 = random.choice(population)
+
+                # 3) Merging genes is 50/50 odds of getting each parents allocation for a stock.
+                allocations = np.zeros(len(self._stock_db.tickers))
+                for allocation_index in range(len(allocations)):
+                    if random.random() < mutation_base_rate * math.sqrt(generation):
+                        allocations[allocation_index] = random.random()
+                    elif random.random() < 0.5:
+                        allocations[allocation_index] = parent_1.allocation_array[allocation_index]
+                    else:
+                        allocations[allocation_index] = parent_2.allocation_array[allocation_index]
+
+                # Especially in the beginning, all zeroes is possible.
+                if allocations.sum() == 0:
+                    continue
+
+                # Normalize.
+                allocations = allocations / (allocations.sum() + 0.0)
+                portfolio = Portfolio(
+                    self._stock_db, percent_allocations=allocations)
+                portfolio.getScore(self._required_return)
+                population.append(portfolio)
+                num_portfolios += 1
+
+            population.sort(key=lambda p: p.score, reverse=True)
+
+        return population[0]
 
     def _BinarySolveIndividualSell(self, input_args):
         """Check if an individual sale of stock is an improvement on the current regime."""
@@ -58,7 +136,9 @@ class PortfolioFactory(object):
         Theoretically this could fall prey to local maxima, so improvements
             should be sought.
         TODO: Attempt Simulated Annealing w/ ~32k portfolios.
-        TODO: Attempt Genetic Algorithm w/ ~32k portfolios.
+        TODO: Attempt a middle ground of genetic and binary.
+            # Create a basic portfolio w/ genetic, then run through binary to finesse it.
+            # Add a caveat that trade_amount = min(trade_amount, best[sell])
 
         Returns:
             desired_allocations {dict}: Dictionary of tickers to percent
