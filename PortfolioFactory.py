@@ -57,7 +57,8 @@ class PortfolioFactory(object):
 
         Theoretically this could fall prey to local maxima, so improvements
             should be sought.
-        TODO: Attempt Simulated Annealing.
+        TODO: Attempt Simulated Annealing w/ ~32k portfolios.
+        TODO: Attempt Genetic Algorithm w/ ~32k portfolios.
 
         Returns:
             desired_allocations {dict}: Dictionary of tickers to percent
