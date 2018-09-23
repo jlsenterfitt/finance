@@ -17,9 +17,9 @@ class PortfolioFactory(object):
         """
         self._stock_db = stock_db
         self._required_return = required_return
-        self.desired_portfolio = self._Solve()
+        self.desired_portfolio = self._BinarySolve()
 
-    def _SolveIndividualSell(self, input_args):
+    def _BinarySolveIndividualSell(self, input_args):
         """Check if an individual sale of stock is an improvement on the current regime."""
         (best, trade_amount, best_score, sell) = input_args
         if best[sell] < trade_amount:
@@ -46,7 +46,7 @@ class PortfolioFactory(object):
 
         return (best, best_score)
 
-    def _Solve(self):
+    def _BinarySolve(self):
         """Actually run the solver.
 
         Uses a binary heuristic to optimize the solution. Start with 100% in an
@@ -63,7 +63,6 @@ class PortfolioFactory(object):
             desired_allocations {dict}: Dictionary of tickers to percent
                 allocations.
         """
-        minor_steps = 0
         major_steps = 0
         best = np.zeros(len(self._stock_db.tickers))
         best[0] = 1
@@ -80,21 +79,23 @@ class PortfolioFactory(object):
             for sell in xrange(len(best)):
                 inputs.append((np.copy(best), trade_amount, best_score, sell))
 
-            results = pool.map(self._SolveIndividualSell, inputs, int(math.ceil(math.sqrt(len(inputs)))))
+            results = pool.map(self._BinarySolveIndividualSell, inputs, int(
+                math.ceil(math.sqrt(len(inputs)))))
 
             for result in results:
                 (curr, curr_score) = result
                 if curr_score > best_score:
-                  best_score = curr_score
-                  best = np.copy(curr)
-                  improved = True
-                  major_steps += 1
+                    best_score = curr_score
+                    best = np.copy(curr)
+                    improved = True
+                    major_steps += 1
 
             if not improved:
                 trade_amount /= 2.0
                 print('New trade amount: %f' % trade_amount)
             else:
-                print('Improvements: %d, score: %f' % (major_steps, best_score))
+                print('Improvements: %d, score: %f' %
+                      (major_steps, best_score))
 
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
         portfolio.getScore(self._required_return)
