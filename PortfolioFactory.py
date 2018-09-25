@@ -1,5 +1,4 @@
 import math
-from multiprocessing.dummy import Pool
 import numpy as np
 import random
 import time
@@ -157,19 +156,24 @@ class PortfolioFactory(object):
         best = init_allocation
         portfolio = Portfolio(self._stock_db, percent_allocations=best)
         best_score = portfolio.getScore(self._required_return)
-        pool = Pool()
+        # When rounded, translates to +/- 1 basis point.
+        min_trade_amount = 0.00005
+        max_time = 3600
 
         trade_amount = 1
-        # Run until rounding is +/- 1 basis point.
-        while trade_amount >= 0.00005:
+        full_start = time.time()
+        while trade_amount >= min_trade_amount and time.time() - full_start < max_time:
             improved = False
 
             inputs = []
             for sell in xrange(len(best)):
+                if best[sell] < trade_amount:
+                    continue
                 inputs.append((np.copy(best), trade_amount, best_score, sell))
 
-            results = pool.map(self._BinarySolveIndividualSell, inputs, int(
-                math.ceil(math.sqrt(len(inputs)))))
+            start = time.time()
+            results = map(self._BinarySolveIndividualSell, inputs)
+            print('Selling %d took %d seconds' % (len(inputs), time.time() - start))
 
             for result in results:
                 (curr, curr_score) = result
