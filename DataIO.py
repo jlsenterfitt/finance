@@ -41,6 +41,7 @@ def getTickerList(filename):
         reader.next()  # Header
         for row in reader:
             ticker = row[0]
+            ticker = sub(r'[^A-Z]', '-', ticker)
             expense = _stringToDecimal(row[1])
             ticker_list.append(ticker)
             expense_ratio_dict[ticker] = expense
@@ -277,7 +278,9 @@ def _callApi(ticker):
     result = {}
     # Track the number of 503s in case the server is down for an extended period.
     count_503s = 0
-    while 'Time Series (Daily)' not in result:
+    attempts = 0
+    while 'Time Series (Daily)' not in result and attempts > 120:
+        attempts += 1
         sleep(max(
             0,
             Config.MIN_TIME_BETWEEN_CALLS - (time() - last_request_time)))
@@ -292,6 +295,9 @@ def _callApi(ticker):
         except ValueError as e:
             print(raw_result)
             raise e
+
+    if attempts >= 120:
+        raise IOError('Could not get ticker %s' % ticker)
 
     # Extract the date-price pairs.
     data = {}
