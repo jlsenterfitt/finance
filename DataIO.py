@@ -285,6 +285,7 @@ def _callApi(ticker):
             0,
             Config.MIN_TIME_BETWEEN_CALLS - (time() - last_request_time)))
         raw_result = requests.get(Config.BASE_REQUEST + ticker)
+        last_request_time = time()
         try:
             if raw_result.status_code == 503:
                 count_503s += 1
