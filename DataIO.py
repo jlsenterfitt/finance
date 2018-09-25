@@ -279,7 +279,7 @@ def _callApi(ticker):
     # Track the number of 503s in case the server is down for an extended period.
     count_503s = 0
     attempts = 0
-    while 'Time Series (Daily)' not in result and attempts > 120:
+    while 'Time Series (Daily)' not in result and attempts < 120:
         attempts += 1
         sleep(max(
             0,
