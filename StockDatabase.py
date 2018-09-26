@@ -15,25 +15,11 @@ class StockDatabase(object):
             stock_dict {dict}: Dict of stock objects.
         """
         self.stock_dict = stock_dict
-        self.stock_dict = self._filterStocks()
         # Create a "standard" order of tickers.
         self.tickers = sorted(self.stock_dict.keys())
         self.price_array = self._getFilteredPrices()
         self.price_change_array = self._getPriceChangeArray()
         # TODO: Need to add CASH as a valid investment.
-
-    def _filterStocks(self):
-        """Remove stocks with too little data.
-
-        Returns:
-            stock_dict {dict}: Filtered dictionary of stocks.
-        """
-        new_stock_dict = {}
-        for ticker in self.stock_dict:
-            if (len(self.stock_dict[ticker].ordered_date_dict)
-                    >= Config.MINIMUM_AMOUNT_DATA):
-                new_stock_dict[ticker] = self.stock_dict[ticker]
-        return new_stock_dict
 
     def _getFilteredPrices(self):
         """Generate an array of all days with prices for every ticker.

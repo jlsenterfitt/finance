@@ -30,7 +30,7 @@ def getInputData():
 
     # Create all stock objects.
     stock_dict = {}
-    for ticker in ticker_list:
+    for ticker in raw_data.keys():
         stock_dict[ticker] = Stock(
             raw_data[ticker], ticker, expense_ratio_dict[ticker])
 
@@ -57,7 +57,7 @@ def getTrades(current_portfolio, desired_portfolio):
     return {}
 
 
-def optimizeForReturn(required_return, stock_db):
+def optimizeForReturn(required_return, stock_db, use_genetic):
     """Optimize and write a solution for a given return.
 
     Args:
@@ -65,7 +65,7 @@ def optimizeForReturn(required_return, stock_db):
         stock_db {StockDatabase}: A database of all necessary stock info.
     """
     print('Optimizing portfolio for %f' % required_return)
-    pf = PortfolioFactory(stock_db, required_return)
+    pf = PortfolioFactory(stock_db, required_return, use_genetic=use_genetic)
     desired_portfolio = pf.desired_portfolio
     print('Required Return: %f' % required_return)
     print('Expected Return: %f' % math.pow(
@@ -91,7 +91,9 @@ def main():
     parser.add_argument('--solve', dest='solve', action='store_true')
     parser.add_argument('--no-solve', dest='solve', action='store_false')
     parser.add_argument('--set_date', type=str, help='Some date to run as')
+    parser.add_argument('--use_genetic', dest='use_genetic', action='store_true')
     parser.set_defaults(solve=True)
+    parser.set_defaults(use_genetic=False)
     args = parser.parse_args()
     required_return = args.desired_return
 
@@ -112,7 +114,7 @@ def main():
     if not args.solve:
         return
 
-    desired_portfolio = optimizeForReturn(required_return, stock_db)
+    desired_portfolio = optimizeForReturn(required_return, stock_db, args.use_genetic)
 
     tf = getTrades(current_portfolio, desired_portfolio)
 

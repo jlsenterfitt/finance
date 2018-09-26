@@ -65,10 +65,14 @@ def getRawData(ticker_list, use_cache=True):
         cache_data = _retrieveCacheFiles(ticker_list)
     else:
         cache_data = {}
+    for ticker in cache_data.keys():
+        if cache_data[ticker] == 'too_short':
+            del cache_data[ticker]
+            ticker_list.remove(ticker)
     available_keys = sorted(
         cache_data.keys(), key=lambda ticker: cache_data[ticker]['_timestamp'])
     # Hack: Remove oldest tickers to slowly refresh cache throughout day.
-    for _ in xrange(len(available_keys) / 100):
+    for _ in xrange(int(math.ceil(len(available_keys) / 100.0))):
         del available_keys[0]
     # Determine missing keys and call API for them.
     missing_tickers = set(ticker_list).difference(set(available_keys))
@@ -207,6 +211,9 @@ def _retrieveCache(filename):
                 raise IOError
         ticker = filename.split('.')[0]
         output = {}
+        if len(contents.keys()) < Config.MINIMUM_AMOUNT_DATA:
+            output[ticker] = 'too_short'
+            return output
         output[ticker] = OrderedDict(sorted(contents.items(), key=lambda t: t[0]))
     except IOError:
         pass
@@ -259,6 +266,8 @@ def _getAPIData(ticker_list):
               (t + 1, len(ticker_list), ticker))
         cache_data.update(_callApi(ticker))
         _storeCache('cache_files/' + ticker + '.pkl.bz2', cache_data[ticker])
+        if len(cache_data[ticker].keys()) < Config.MINIMUM_AMOUNT_DATA:
+            del cache_data[ticker]
     return cache_data
 
 
