@@ -34,6 +34,9 @@ def getInputData():
         stock_dict[ticker] = Stock(
             raw_data[ticker], ticker, expense_ratio_dict[ticker])
 
+    if not len(stock_dict.keys()):
+        raise ValueError('No keys found.')
+
     # Create stock database.
     stock_db = StockDatabase(stock_dict)
 
@@ -91,7 +94,8 @@ def main():
     parser.add_argument('--solve', dest='solve', action='store_true')
     parser.add_argument('--no-solve', dest='solve', action='store_false')
     parser.add_argument('--set_date', type=str, help='Some date to run as')
-    parser.add_argument('--use_genetic', dest='use_genetic', action='store_true')
+    parser.add_argument('--use_genetic', dest='use_genetic',
+                        action='store_true')
     parser.set_defaults(solve=True)
     parser.set_defaults(use_genetic=False)
     args = parser.parse_args()
@@ -101,7 +105,9 @@ def main():
         raise ValueError('Desired return or no-solve must be specified.')
 
     if args.set_date:
-        Config.TODAY = datetime.datetime.strptime(args.set_date, '%Y-%m-%d')
+        Config.TODAY = datetime.datetime.strptime(
+            args.set_date, '%Y-%m-%d')
+        Config.SetMinData()
 
     print('Reading data...')
 
@@ -114,7 +120,8 @@ def main():
     if not args.solve:
         return
 
-    desired_portfolio = optimizeForReturn(required_return, stock_db, args.use_genetic)
+    desired_portfolio = optimizeForReturn(
+        required_return, stock_db, args.use_genetic)
 
     tf = getTrades(current_portfolio, desired_portfolio)
 

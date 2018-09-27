@@ -5,6 +5,7 @@ That includes caching, API calls, file reading, etc."""
 import bz2
 from collections import OrderedDict
 import csv
+import datetime
 from decimal import Decimal
 import os
 import cPickle as pickle
@@ -152,7 +153,7 @@ def writeDesiredPortfolio(portfolio, stock_db, filename):
     output_data = []
     for i, ticker in enumerate(stock_db.tickers):
         output_data.append([ticker, portfolio.allocation_array[i]])
-    
+
     sorted_output_data = sorted(output_data, key=lambda a: a[1], reverse=True)
     sorted_output_data.insert(0, ['Ticker', 'Allocation'])
 
@@ -209,12 +210,18 @@ def _retrieveCache(filename):
                     return {}
             except KeyError:
                 raise IOError
+        for date in contents:
+            if date == '_timestamp':
+                continue
+            if datetime.datetime.strptime(date, '%Y-%m-%d') > Config.TODAY:
+                del contents[date]
         ticker = filename.split('.')[0]
         output = {}
         if len(contents.keys()) < Config.MINIMUM_AMOUNT_DATA:
             output[ticker] = 'too_short'
             return output
-        output[ticker] = OrderedDict(sorted(contents.items(), key=lambda t: t[0]))
+        output[ticker] = OrderedDict(
+            sorted(contents.items(), key=lambda t: t[0]))
     except IOError:
         pass
     return output
@@ -229,10 +236,12 @@ def _retrieveCacheFiles(ticker_list):
     """
     filenames = os.listdir('./cache_files')
     # Remove any files we aren't actively looking for.
-    filenames = [filename for filename in filenames if filename.split('.')[0] in ticker_list]
+    filenames = [filename for filename in filenames if filename.split('.')[
+        0] in ticker_list]
     output = {}
     pool = Pool()
-    content_dicts = pool.map(_retrieveCache, filenames, int(math.ceil(math.sqrt(len(filenames)))))
+    content_dicts = pool.map(_retrieveCache, filenames, int(
+        math.ceil(math.sqrt(len(filenames)))))
     pool.close()
     for content_dict in content_dicts:
         output.update(content_dict)
@@ -266,6 +275,11 @@ def _getAPIData(ticker_list):
               (t + 1, len(ticker_list), ticker))
         cache_data.update(_callApi(ticker))
         _storeCache('cache_files/' + ticker + '.pkl.bz2', cache_data[ticker])
+        for date in cache_data[ticker]:
+            if date == '_timestamp':
+                continue
+            if datetime.datetime.strptime(date, '%Y-%m-%d') > Config.TODAY:
+                del cache_data[ticker][date]
         if len(cache_data[ticker].keys()) < Config.MINIMUM_AMOUNT_DATA:
             del cache_data[ticker]
     return cache_data
