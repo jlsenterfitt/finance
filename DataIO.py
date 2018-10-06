@@ -215,6 +215,8 @@ def _retrieveCache(filename):
                 continue
             if datetime.datetime.strptime(date, '%Y-%m-%d') > Config.TODAY:
                 del contents[date]
+            elif contents[date] < 0.01:
+                del contents[date]
         ticker = filename.split('.')[0]
         output = {}
         if len(contents.keys()) < Config.MINIMUM_AMOUNT_DATA:
@@ -279,6 +281,8 @@ def _getAPIData(ticker_list):
             if date == '_timestamp':
                 continue
             if datetime.datetime.strptime(date, '%Y-%m-%d') > Config.TODAY:
+                del cache_data[ticker][date]
+            elif cache_data[ticker][date] <= 0.01:
                 del cache_data[ticker][date]
         if len(cache_data[ticker].keys()) < Config.MINIMUM_AMOUNT_DATA:
             del cache_data[ticker]
