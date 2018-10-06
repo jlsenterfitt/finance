@@ -107,7 +107,6 @@ def main():
     if args.set_date:
         Config.TODAY = datetime.datetime.strptime(
             args.set_date, '%Y-%m-%d')
-        Config.SetMinData()
 
     print('Reading data...')
 
