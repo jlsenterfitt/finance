@@ -80,7 +80,8 @@ def optimizeForReturn(required_return, stock_db, use_genetic):
     # Write desired portfolio.
     DataIO.writeDesiredPortfolio(
         desired_portfolio, stock_db,
-        'output/DesiredPortfolio_%.4f_%s.csv' % (required_return, Config.TODAY.date()))
+        'output/DesiredPortfolio_%.0f_%.4f_%s.csv' % (
+            Config.MIMIMUM_AMOUNT_DATA, required_return, Config.TODAY.date()))
 
     print('Finished for %f' % required_return)
 
@@ -91,6 +92,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--desired_return', type=float,
                         help='The desired return.')
+    parser.add_argument('--num_years', type=float,
+                        help='Number of years of data to require.')
     parser.add_argument('--solve', dest='solve', action='store_true')
     parser.add_argument('--no-solve', dest='solve', action='store_false')
     parser.add_argument('--set_date', type=str, help='Some date to run as')
@@ -107,6 +110,9 @@ def main():
     if args.set_date:
         Config.TODAY = datetime.datetime.strptime(
             args.set_date, '%Y-%m-%d')
+
+    if args.num_years:
+        Config.MINIMUM_AMOUNT_DATA = Config.DAYS_IN_YEAR * args.num_years
 
     print('Reading data...')
 
