@@ -5,7 +5,7 @@ DAYS_IN_YEAR = 261
 INITIAL_PERCENTILE = 0.5
 
 TODAY = datetime.datetime.today()
-MINIMUM_AMOUNT_DATA = 7 * DAYS_IN_YEAR
+MINIMUM_AMOUNT_DATA = 10 * DAYS_IN_YEAR
 
 with open('api_key_ignore_.txt', 'r') as f:
     API_KEY = f.read()
