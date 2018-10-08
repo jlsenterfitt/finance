@@ -81,7 +81,7 @@ def optimizeForReturn(required_return, stock_db, use_genetic):
     DataIO.writeDesiredPortfolio(
         desired_portfolio, stock_db,
         'output/DesiredPortfolio_%.0f_%.4f_%s.csv' % (
-            Config.MIMIMUM_AMOUNT_DATA, required_return, Config.TODAY.date()))
+            Config.MINIMUM_AMOUNT_DATA, required_return, Config.TODAY.date()))
 
     print('Finished for %f' % required_return)
 
